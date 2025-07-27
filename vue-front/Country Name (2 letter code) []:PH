@@ -1,0 +1,103 @@
+# Create your CA
+openssl genrsa -out ca.key 2048
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 -out ca.crt
+
+# Generate server certificate
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -out server.csr
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -sha256
+
+# Generate client certificate
+openssl genrsa -out client.key 2048
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365 -sha256
+
+
+
+Country Name (2 letter code) []:PH
+State or Province Name (full name) []:Metro Manila
+Locality Name (eg, city) []:Taguig
+Organization Name (eg, company) []:RS
+Organizational Unit Name (eg, section) []:IT
+Common Name (eg, fully qualified host name) []:localhost
+Email Address []:rhaynel.samar.sillador@gmail.com
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:secret
+
+
+
+
+
+# application.yml
+server:
+  ssl:
+    key-store: classpath:server-keystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+    trust-store: classpath:server-truststore.p12
+    trust-store-password: changeit
+    trust-store-type: PKCS12
+    client-auth: need  # This is the key for mTLS
+
+
+
+
+# Create truststore (e.g. for server to trust clients)
+keytool -import -trustcacerts -alias client -file client.crt -keystore server-truststore.p12 -storetype PKCS12 -storepass changeit
+
+# Create keystore (for server's own identity)
+keytool -importkeystore -deststorepass changeit -destkeypass changeit \
+  -destkeystore server-keystore.p12 -srckeystore server.jks -srcstoretype JKS -srcstorepass changeit -deststoretype PKCS12
+
+
+keytool -genkeypair \
+  -alias server \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 365 \
+  -storetype PKCS12 \
+  -keystore server-keystore.p12 \
+  -dname "CN=localhost, OU=IT, O=RS, L=Taguig, S=Metro Manila, C=PH" \
+  -storepass secret \
+  -keypass secret
+
+
+  keytool -exportcert \
+  -alias server \
+  -keystore server-keystore.p12 \
+  -storetype PKCS12 \
+  -file server-cert.cer \
+  -storepass secret
+
+
+
+keytool -importcert \
+  -alias server \
+  -file server-cert.cer \
+  -keystore client-truststore.p12 \
+  -storetype PKCS12 \
+  -storepass secret \
+  -noprompt
+
+
+
+keytool -genkeypair \
+  -alias client \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 365 \
+  -storetype PKCS12 \
+  -keystore client-keystore.p12 \
+  -dname "CN=Client, OU=Dev, O=MyCompany, L=City, S=State, C=PH" \
+  -storepass changeit \
+  -keypass changeit
+
+
+keytool -exportcert \
+  -alias client \
+  -keystore client-keystore.p12 \
+  -storetype PKCS12 \
+  -file client-cert.cer \
+  -storepass changeit
