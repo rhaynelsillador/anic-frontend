@@ -1,0 +1,54 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+broker-service/.frontend/node/*
+
+broker-service/.frontend/node/**
+
+
+broker-service/node/*
+.DS_Store
+broker-service/build.log
+broker-service/mvnw
+broker-service/mvnw.cmd
+broker-service/.mvn/*
+broker-service/src/main/resources/application copy.properties
+broker-service/src/main/resources/application.properties
+broker-service/src/main/resources/static/assets/*
+broker-service/src/main/resources/static/demo/*
+broker-service/src/main/resources/templates/index.html
+broker-service/src/main/resources/static/index.html
+broker-service/src/main/resources/static/favicon.ico
+vue-front/.editorconfig
+vue-front/.eslintrc.cjs
+vue-front/.prettierrc.json
