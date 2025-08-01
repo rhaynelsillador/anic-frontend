@@ -67,7 +67,6 @@ const setDefaultYearLevelValue = () => {
 
 const loadSectionData = () => {
     let model = new SectionResponse();
-    console.log("useGlobalStore().appConfig ", useGlobalStore().appConfig)
     model.getData({
         filters: {
             yearLevel: { value: subjectInfo.value.yearLevelData.name, matchMode: 'equals' },

@@ -13,7 +13,7 @@
         <DataTable v-model:filters="filters" :value="dataList" paginator lazy :rows="10" dataKey="id"
             filterDisplay="row" :globalFilterFields="['employeeNo', 'firstName', 'lastName', 'contactNo', 'position']"
             @lazyLoad="loadCarsLazy" @page="onPage" @filter="loadCarsLazy" @sort="loadCarsLazy"
-            :totalRecords="totalRecords">
+            :rowsPerPageOptions="[10, 25, 50]" :totalRecords="totalRecords">
             <template #empty> No teachers found. </template>
             <template #loading> Loading teachers data. Please wait. </template>
             <Column field="yearLevel" header="Grade level" filterField="yearLevel" style="min-width: 12rem"
@@ -70,8 +70,9 @@
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Position" />
+                    <Select v-model="filterModel.value" :options="schoolYears" 
+                        optionLabel="year" optionValue="year" @change="filterCallback()"
+                        placeholder="Select School Year" :showClear="true" style="max-width: 12rem" />
                 </template>
             </Column>
 
@@ -126,7 +127,7 @@
 
 <script setup>
 import { FilterMatchMode } from '@primevue/core/api';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 
 import { useToast } from "primevue/usetoast";
 
@@ -136,6 +137,8 @@ import { useGlobalStore } from '@/stores/global';
 import SectionResponse from '@/types/section';
 import TeacherResponse from '@/types/teacher';
 import YearLevelResponse from '@/types/year_level';
+
+const globalStore = useGlobalStore();
 
 const fTmp = {
     code: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -153,9 +156,17 @@ const section = ref({});
 const submitted = ref(false);
 const teachers = ref([])
 const yearLevels = ref([])
+
+// Use computed to get school years from global store
+const schoolYears = computed(() => globalStore.schoolYears);
+
 onMounted(() => {
     // Get the data from the server
     loadData({ filters: filters.value })
+    // Ensure school years are loaded if not already
+    if (!globalStore.schoolYearsLoaded) {
+        globalStore.fetchSchoolYears();
+    }
 });
 
 function onPage(event) {

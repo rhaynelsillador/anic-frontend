@@ -16,8 +16,11 @@ const model = ref([
         items: [
             { label: 'Students', icon: 'pi pi-fw pi-user', to: '/management/student' },
             { label: 'Teachers', icon: 'pi pi-fw pi-users', to: '/management/teacher' },
+            { label: 'Classes and Courses', icon: 'pi pi-fw pi-building', to: '/management/classes' },
             { label: 'Sections', icon: 'pi pi-fw pi-building', to: '/management/section' },
-            { label: 'Subjects', icon: 'pi pi-fw pi-book', to: '/management/subject' }
+            { label: 'Subjects', icon: 'pi pi-fw pi-book', to: '/management/subject' },
+            { label: 'School Years', icon: 'pi pi-fw pi-calendar', to: '/management/schoolyear' },
+            { label: 'Documents', icon: 'pi pi-fw pi-book', to: '/management/documents' }
         ]
     },
     {

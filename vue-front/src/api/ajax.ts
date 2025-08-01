@@ -16,11 +16,11 @@ api.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 403 ||
           (typeof error.response.data === 'string' && error.response.data.includes("Access Denied"))) {
-        // alert("Access Denied");
         router.push("/auth/access")
       }else if (error.response.status === 401) {
-        // alert("Access Denied");
-        router.push("/auth/access")
+        // localStorage.removeItem('token')
+        // localStorage.removeItem("isLogin")
+        router.push("/auth/login")
       }
     }
     return Promise.reject(error);

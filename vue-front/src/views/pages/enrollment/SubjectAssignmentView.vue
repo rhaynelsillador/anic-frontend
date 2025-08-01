@@ -13,30 +13,38 @@
 
         <DataTable v-model:filters="filters" :value="dataList" paginator lazy :rows="10" dataKey="id"
             filterDisplay="row" @lazyLoad="loadCarsLazy" @page="onPage" @filter="loadCarsLazy" @sort="loadCarsLazy"
-            :totalRecords="totalRecords">
+            :rowsPerPageOptions="[10, 25, 50]" :totalRecords="totalRecords">
             <template #empty> No teachers found. </template>
             <template #loading> Loading teachers data. Please wait. </template>
-            <Column field="code" header="Code" style="min-width: 12rem" :showFilterMenu="false" :sortable="true">
+            <Column field="code" header="Code" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
-                    <a href="javascript:void(0)" @click="openNew(data)">{{ data.code }}</a>
+                    <a href="javascript:void(0)" @click="data.locked ? null : openNew(data) ">{{ data.code }}</a>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Employee No" />
+                    <InputText style="max-width: 7rem" v-model="filterModel.value" type="text" @input="filterCallback()"
+                        placeholder="Code" />
                 </template>
             </Column>
-            <Column field="subjectCode" header="Subject Code" style="min-width: 12rem" :showFilterMenu="false"
-                :sortable="true">
+            <Column field="subjectCode" header="Subject Code" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
                     {{ data.subjectCode }}
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by First Name" />
+                    <InputText style="max-width: 10rem" v-model="filterModel.value" type="text"
+                        @input="filterCallback()" placeholder="Subject Code" />
                 </template>
             </Column>
-            <Column field="adviser" header="Adviser" filterField="adviser" style="min-width: 12rem"
-                :showFilterMenu="false" :sortable="true">
+            <Column field="subject.units" header="Units" style="max-width: 8rem" :showFilterMenu="false"
+                :sortable="true">
+                <template #body="{ data }">
+                    {{ data.units }}
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <InputText style="max-width: 6rem" v-model="filterModel.value" type="text" @input="filterCallback()"
+                        placeholder="Search by units" />
+                </template>
+            </Column>
+            <Column field="adviser" header="Adviser" filterField="adviser" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.adviser }}</span>
@@ -47,8 +55,8 @@
                         placeholder="Search by Last Name" />
                 </template>
             </Column>
-            <Column field="yearLevel" header="Grade level" filterField="yearLevel" style="min-width: 12rem"
-                :showFilterMenu="false" :sortable="true">
+            <Column field="yearLevel" header="Class or Course" filterField="yearLevel" :showFilterMenu="false"
+                :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.yearLevel }}</span>
@@ -60,8 +68,7 @@
                 </template>
             </Column>
 
-            <Column field="section" header="Section" filterField="section" style="min-width: 12rem"
-                :showFilterMenu="false" :sortable="true">
+            <Column field="section" header="Section" filterField="section" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.section }}</span>
@@ -73,22 +80,22 @@
                 </template>
             </Column>
 
-            <Column field="schoolYear" header="School Year" filterField="schoolYear" style="min-width: 12rem"
-                :showFilterMenu="false" :sortable="true">
+            <Column field="schoolYear" header="School Year" filterField="schoolYear" :showFilterMenu="false"
+                :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.schoolYear }}</span>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Position" />
+                    <Select v-model="filterModel.value" :options="schoolYears" 
+                        optionLabel="year" optionValue="year" @change="filterCallback()"
+                        placeholder="Select School Year" :showClear="true" style="max-width: 12rem" />
                 </template>
             </Column>
 
 
-            <Column field="room" header="Room" filterField="room" style="min-width: 12rem" :showFilterMenu="false"
-                :sortable="true">
+            <Column field="room" header="Room" filterField="room" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.room }}</span>
@@ -100,37 +107,42 @@
                 </template>
             </Column>
 
-            <Column field="startTime" header="Start Time" filterField="startTime" style="min-width: 12rem"
-                :showFilterMenu="false" :sortable="true">
+            <Column field="startTime" header="Start Time" filterField="startTime" :showFilterMenu="false"
+                :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.startTime }}</span>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
+                    <InputText style="max-width: 7rem" v-model="filterModel.value" type="text" @input="filterCallback()"
                         placeholder="Search by Position" />
                 </template>
             </Column>
 
 
-            <Column field="endTime" header="End Time" filterField="endTime" style="min-width: 12rem"
-                :showFilterMenu="false" :sortable="true">
+            <Column field="endTime" header="End Time" filterField="endTime" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <span>{{ data.endTime }}</span>
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
+                    <InputText style="max-width: 7rem" v-model="filterModel.value" type="text" @input="filterCallback()"
                         placeholder="Search by Position" />
                 </template>
             </Column>
 
+            <Column field="locked" header="Editable" filterField="locked" :showFilterMenu="false" :sortable="true">
+                <template #body="{ data }">
+                    <div class="flex items-center gap-2">
+                        <i class="pi" :class="{ 'pi-check-circle text-green-500 ': !data.locked, 'pi-times-circle text-red-500': data.locked }"></i>
+                    </div>
+                </template>
+               
+            </Column>
+
         </DataTable>
-
-        {{ dialog }}
-
 
         <SubjectAssignmentFormView v-if="dialog" :dialog="dialog" :subject="subject" @onClose="onClose">
         </SubjectAssignmentFormView>
@@ -142,11 +154,13 @@
 
 <script setup>
 import { FilterMatchMode } from '@primevue/core/api';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 
 import { useGlobalStore } from '@/stores/global';
 import SubjectCodeResponse from '@/types/subject_code';
 import SubjectAssignmentFormView from './SubjectAssignmentFormView.vue';
+
+const globalStore = useGlobalStore();
 
 const fTmp = {
     code: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -158,6 +172,10 @@ const fTmp = {
     startTime: { value: null, matchMode: FilterMatchMode.EQUALS },
     endTime: { value: null, matchMode: FilterMatchMode.EQUALS },
     section: { value: null, matchMode: FilterMatchMode.EQUALS },
+    createdDate: { value: null, matchMode: FilterMatchMode.EQUALS },
+    updatedDate: { value: null, matchMode: FilterMatchMode.EQUALS },
+    'subject.units': { value: null, matchMode: FilterMatchMode.EQUALS },
+    locked: { value: null, matchMode: FilterMatchMode.EQUALS },
 
 }
 const dataList = ref([]);
@@ -167,8 +185,15 @@ const totalRecords = ref(0)
 const dialog = ref(false);
 const subject = ref({});
 
+// Use computed to get school years from global store
+const schoolYears = computed(() => globalStore.schoolYears);
+
 onMounted(() => {
-    loadData({ filters: filters.value })
+    loadData({ filters: filters.value });
+    // Ensure school years are loaded if not already
+    if (!globalStore.schoolYearsLoaded) {
+        globalStore.fetchSchoolYears();
+    }
 });
 
 function onPage(event) {

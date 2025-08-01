@@ -82,6 +82,7 @@ const saveGrades = () => {
         </div>
         <br>
         <DataTable v-if="studentGrades.quarters" :value="students" tableStyle="min-width: 50rem">
+            <Column field="student.studentId" header="Student ID"></Column>
             <Column field="student.fullName" header="Student Name"></Column>
             <Column v-for="(val, index) in studentGrades.quarters" :field="val.name" :header="val.name"
                 style="width: 60px;">

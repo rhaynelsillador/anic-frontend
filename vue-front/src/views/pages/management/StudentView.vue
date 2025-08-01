@@ -13,7 +13,7 @@
     <div class="card">
         <DataTable v-model:filters="filters" :value="students" paginator lazy :rows="10" dataKey="id"
             filterDisplay="row" @lazyLoad="loadCarsLazy" @page="onPage" @filter="loadCarsLazy" @sort="onPage"
-            :totalRecords="totalRecords">
+            :rowsPerPageOptions="[10, 25, 50]" :totalRecords="totalRecords">
             <template #empty> No students found. </template>
             <template #loading> Loading students data. Please wait. </template>
 

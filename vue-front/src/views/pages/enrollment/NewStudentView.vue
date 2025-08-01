@@ -3,6 +3,7 @@ import { enrollmentType, genders } from '@/const';
 import SectionResponse from '@/types/section';
 import SubjectResponse from '@/types/subject';
 import YearLevelResponse from '@/types/year_level';
+import StudentStatusComponent from '@/components/StudentStatusComponent.vue'
 import { onMounted, ref, watch } from 'vue';
 
 import { useGlobalStore } from '@/stores/global';
@@ -13,7 +14,36 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const toast = useToast();
-const student = ref({ information: {} })
+
+const student = ref({ yearLevelData:null,
+    id : null,
+    sectionData : null,
+    yearLevel : null,
+    firstName: null,
+    lastName: null,
+    middleName: null,
+    gender: null,
+    section: null,
+    enrollmentType: null,
+    status: null,
+    lrn: null,
+    birthday :null,
+    email : null,
+    contactNumber : null,
+    address : null,
+    information: {
+        religion : null,
+        nationality : null,
+        motherName : null,
+        fatherName : null,
+        parentContactInfo : null,
+        parentAddress : null,
+        batch : null,
+        guardian : null,
+        guardianContactInfo : null,
+        guardianAddress : null
+    } 
+})
 
 const yearLevels = ref([])
 const sections = ref([])
@@ -30,6 +60,8 @@ onMounted(() => {
 
 watch(() => route.fullPath, () => {
     student.value = {
+        id : null,
+        yearLevelData: null,
         information: {}
     }
 })
@@ -124,6 +156,11 @@ const updateStudent = () => {
         (data) => {
             console.log(data)
             // student.value = data.data
+            if (data.status == "SUCCESS") {
+                toast.add({ severity: 'success', summary: 'Success', detail: data.message, group: 'tl', life: 3000 });
+            } else {
+                toast.add({ severity: 'error', summary: data.message, detail: Object.values(data.data).join('\n'), group: 'tl', life: 3000 });
+            }
 
         },
         (err) => {
@@ -193,10 +230,8 @@ const onUpload = () => {
             <div class="flex flex-col md:flex-row gap-8">
                 <div class="card flex flex-col gap-4 w-full">
                     <div class="flex justify-between">
-
                         <div class="font-semibold text-l">Student Informations</div>
-                        <Message v-if="student.status == 'GRADUATED'" severity="info">{{ student.status }}
-                            {{ ' (Batch' + student.information.batch + ') ' }}</Message>
+                        <StudentStatusComponent :status="student.status" :text="' (Batch' + student.information.batch + ') '"></StudentStatusComponent>
                     </div>
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex flex-wrap gap-2 w-full">

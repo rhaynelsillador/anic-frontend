@@ -3,6 +3,7 @@ import router from '@/router';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import ajax from "../api/ajax";
+import SchoolYearResponse from '@/types/school_year';
 
 const currentYear = new Date().getFullYear();
 const isLoaded = ref(false);
@@ -10,7 +11,9 @@ const appConfig = ref({
     schoolYear : currentYear,
   });
 const isLogin = ref(false);
-const loginAccount = ref({})
+const loginAccount = ref({});
+const schoolYears = ref([]);
+const schoolYearsLoaded = ref(false);
 
 export const useGlobalStore = defineStore('global', () => {
 
@@ -47,6 +50,26 @@ export const useGlobalStore = defineStore('global', () => {
         console.log("loginAccount fetch error : ", err)
       })
     }
+
+    const fetchSchoolYears = async () => {
+      if (schoolYearsLoaded.value) {
+        console.log("School years already loaded, skipping fetch")
+        return;
+      }
+      
+      console.log("fetching school years....")
+      let model = new SchoolYearResponse()
+      model.getData({ rows: 1000 },
+        (data) => {
+          schoolYears.value = data.data;
+          schoolYearsLoaded.value = true;
+          console.log("School years loaded:", data.data.length, "records")
+        },
+        (err) => {
+          console.log('Error fetching school years:', err);
+          schoolYearsLoaded.value = true; // Mark as loaded even on error to prevent infinite retries
+        })
+    }
     const checkLoginState = async () =>  {
       await ajax.get(apiAuth.LoginStatus)
       .then(res => {
@@ -54,6 +77,7 @@ export const useGlobalStore = defineStore('global', () => {
             console.log("Detected as loggedin user: Fetching config now ")
             fetchGlobalConfig()
             getLoginAccount()
+            fetchSchoolYears()
           }else{
             isLoaded.value = true
             localStorage.removeItem("isLogin")
@@ -91,9 +115,12 @@ export const useGlobalStore = defineStore('global', () => {
     isLogin,
     appConfig,
     loginAccount,
+    schoolYears,
+    schoolYearsLoaded,
     checkLoginState,
     fetchGlobalConfig,
     getLoginAccount,
+    fetchSchoolYears,
     logout
   }
 })

@@ -13,7 +13,7 @@
         <DataTable v-model:filters="filters" :value="teachers" paginator lazy :rows="10" dataKey="id"
             filterDisplay="row" :globalFilterFields="['employeeNo', 'firstName', 'lastName', 'contactNo', 'position']"
             @lazyLoad="loadCarsLazy" @page="onPage" @filter="loadCarsLazy" @sort="loadCarsLazy"
-            :totalRecords="totalRecords">
+            :rowsPerPageOptions="[10, 25, 50]" :totalRecords="totalRecords">
 
             <template #empty> No teachers found. </template>
             <template #loading> Loading teachers data. Please wait. </template>
@@ -89,7 +89,7 @@
                 <template #body="{ data }">
                     <div class="flex items-center gap-2">
                         <Button label="Academic" icon="pi pi-search" severity="primary" class="mr-2"
-                            @click="() => { router.push('/teacher/index?teacher=' + data.id) }" />
+                            @click="async () => { router.push('/teacher/index?teacher=' + data.id) }" />
                     </div>
                 </template>
             </Column>

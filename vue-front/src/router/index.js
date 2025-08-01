@@ -27,6 +27,11 @@ const router = createRouter({
                     component: () => import('@/views/pages/management/TeacherView.vue')
                 },
                 {
+                    path: '/management/classes',
+                    name: 'classeslist',
+                    component: () => import('@/views/pages/management/ClassesView.vue')
+                },
+                {
                     path: '/management/section',
                     name: 'sectionlist',
                     component: () => import('@/views/pages/management/SectionView.vue')
@@ -37,6 +42,21 @@ const router = createRouter({
                     component: () => import('@/views/pages/management/SubjectView.vue')
                 },
                 {
+                    path: '/management/documents',
+                    name: 'documentlist',
+                    component: () => import('@/views/pages/management/DocumentsView.vue')
+                },
+                {
+                    path: '/management/schoolyear',
+                    name: 'schoolyearlist',
+                    component: () => import('@/views/pages/management/SchoolYearView.vue')
+                },
+                {
+                    path: '/management/documents/form',
+                    name: 'documentform',
+                    component: () => import('@/views/pages/management/forms/DocumentsForm.vue')
+                },
+                {
                     path: '/enrollment/student',
                     name: 'newstudent',
                     component: () => import('@/views/pages/enrollment/NewStudentView.vue')
@@ -44,7 +64,7 @@ const router = createRouter({
                 {
                     path: '/enrollment/student/:id',
                     name: 'updatestudent',
-                    component: () => import('@/views/pages/enrollment/NewStudentView.vue')
+                    component: () => import('@/views/pages/management/StudentRecordsView.vue')
                 },
                 {
                     path: '/enrollment/subject/assignment',

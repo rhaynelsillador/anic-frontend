@@ -54,10 +54,9 @@
                 </div>
             </template>
             <template #filter="{ filterModel, filterCallback }">
-                <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                    placeholder="Search by school year" />
-
-
+                <Select v-model="filterModel.value" :options="schoolYears" 
+                    optionLabel="year" optionValue="year" @change="filterCallback()"
+                    placeholder="Select School Year" :showClear="true" style="max-width: 12rem" />
             </template>
         </Column>
         <Column field="yearLevel" header="Year Level" filterField="yearLevel" style="min-width: 12rem"
@@ -117,7 +116,7 @@
 
 <script setup>
 import { FilterMatchMode } from '@primevue/core/api';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 
@@ -126,13 +125,17 @@ const emit = defineEmits(['onSelect']);
 import { genders } from '@/const';
 import { useGlobalStore } from '@/stores/global';
 import EnrollmentResponse from '@/types/enrollment';
-const route = useRoute();
 
+const route = useRoute();
+const globalStore = useGlobalStore();
 
 const students = ref([]);
 const loadLazyTimeout = ref(null)
 const totalRecords = ref(0)
 const selectedStudent = ref([])
+
+// Use computed to get school years from global store
+const schoolYears = computed(() => globalStore.schoolYears);
 const fTmp = {
     'student.studentId': { value: null, matchMode: FilterMatchMode.CONTAINS },
     'student.lrn': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -142,7 +145,7 @@ const fTmp = {
     'student.gender': { value: null, matchMode: FilterMatchMode.EQUALS },
     'student.birthday': { value: null, matchMode: FilterMatchMode.EQUALS },
     'student.contactNumber': { value: null, matchMode: FilterMatchMode.EQUALS },
-    'student.status': { value: "OPEN", matchMode: FilterMatchMode.EQUALS },
+    'status': { value: "OPEN", matchMode: FilterMatchMode.EQUALS },
     yearLevel: { value: null, matchMode: FilterMatchMode.EQUALS },
     schoolYear: { value: useGlobalStore().appConfig.schoolYear, matchMode: FilterMatchMode.EQUALS },
 
@@ -152,6 +155,11 @@ const filters = ref(fTmp);
 onMounted(() => {
     // Get the data from the server
     loadStudents({ filters: filters.value })
+    
+    // Ensure school years are loaded if not already
+    if (!globalStore.schoolYearsLoaded) {
+        globalStore.fetchSchoolYears();
+    }
 
     console.log(selectedStudent.value, 'mounted')
 

@@ -10,7 +10,7 @@ onMounted(() => {
   if (!globalStore.isLoaded) {
     setTimeout(() => {
       globalStore.checkLoginState()
-    }, 1000)
+    }, 100)
 
   }
 })

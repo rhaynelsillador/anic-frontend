@@ -25,6 +25,7 @@ export const ApiEnrollment = api + "/v1/enrollment"
 export const ApiRoom = api + "/v1/room"
 export const ApiAttendance = api + "/v1/attendance"
 export const ApiGrade = api + "/v1/grade"
+export const ApiSchoolYear = api + "/v1/schoolyear"
 
 
 export const ApiConfig = api + "/v1/config"
@@ -77,6 +78,10 @@ export const gradeApi = {
   BaseUrl : ApiGrade
 }
 
+export const schoolYearApi = {
+  BaseUrl : ApiSchoolYear
+}
+
 export const adminApi = {
   config : ApiConfig,
   account : ApiAccount,
@@ -90,6 +95,8 @@ export const dashboardApi = {
 
 
 
+
+export const statuses = [{'code' : true, 'name' : 'Active'}, {'code' : false, 'name' : 'Inactive'}]
 
 export const genders = [{"name" : "Male", "code" : "MALE"}, {"name" : "Female", "code" : "FEMALE"} ]
 
@@ -106,6 +113,15 @@ export const studentStatus = [
     {"name" : "Dropped", "code" : "DROPPED"},
     {"name" : "Incomplete", "code" : "INCOMPLETE"},
   ]
+  
+export const groupLevels = [
+    {"name" : "Prep", "code" : "PREP"},
+    {"name" : "Elementary", "code" : "ELEMENTARY"},
+    {"name" : "Junior High", "code" : "JUNIOR_HIGH"},
+    {"name" : "Senior High", "code" : "SENIOR_HIG"},
+    {"name" : "College", "code" : "COLLEGE"},
+  ]
+
 
 export const primaryColors = [
     { name: 'emerald', palette: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b', 950: '#022c22' } },

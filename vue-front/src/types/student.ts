@@ -1,5 +1,5 @@
 import ajax from "../api/ajax";
-import { studentApi } from "../const";
+import { studentApi, subjectCodeApi } from "../const";
 import { BaseResponse } from "./base_response";
 
 import { Filter, FilterParser } from './Filter';
@@ -47,6 +47,17 @@ export default class StudentResponse {
 
   public getDataById(id : number, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.get<BaseResponse>(studentApi.BaseUrl+'/'+id)
+        .then(res => {
+            console.log(res.data)
+            if (success) success(res.data)
+        })
+        .catch(err => {
+          if (error) error(err)
+        })
+  }
+
+  public getAcademicDataById(id : number, success: (data: BaseResponse) => void, error: (err: any) => void): void {
+    ajax.get<BaseResponse>(subjectCodeApi.BaseUrl+'/student/'+id)
         .then(res => {
             console.log(res.data)
             if (success) success(res.data)
