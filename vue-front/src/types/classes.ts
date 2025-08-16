@@ -26,7 +26,6 @@ export default class ClassesResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<ClassesResponse>(yearLeveApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -46,7 +45,6 @@ export default class ClassesResponse {
   public postData(params : Classes, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.post<BaseResponse>(yearLeveApi.BaseUrl, params)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -58,7 +56,6 @@ export default class ClassesResponse {
   public putData(id: number, params : {}, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.put<BaseResponse>(yearLeveApi.BaseUrl+'/'+id, params)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })

@@ -168,27 +168,20 @@ const loadData = (filter) => {
                 code,
                 groupYearLevel
             }));
-
-            console.log("prerequisites ", prerequisites)
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
 const fetchTechers = () => {
     let model = new TeacherResponse()
     model.getTeachers({ rows: 1000 },
-        (data) => teachers.value = data.data,
-        (err) => console.log(err))
+        (data) => teachers.value = data.data)
 }
 
 
 const fetchYearLevels = () => {
     let model = new YearLevelResponse()
     model.getData({ rows: 1000 },
-        (data) => yearLevels.value = data.data,
-        (err) => console.log(err))
+        (data) => yearLevels.value = data.data)
 }
 
 function openNew(data) {

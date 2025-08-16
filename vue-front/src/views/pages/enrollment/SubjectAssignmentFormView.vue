@@ -22,6 +22,8 @@ const subjects = ref([])
 const rooms = ref([])
 const teachers = ref([])
 const isOpen = ref(true)
+const errors = ref({});
+const isLoading = ref(false)
 
 const emit = defineEmits(['onClose']);
 
@@ -51,9 +53,6 @@ const loadData = () => {
             }));
 
             setDefaultYearLevelValue()
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
@@ -86,9 +85,6 @@ const loadSectionData = () => {
 
             }
 
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
@@ -109,9 +105,6 @@ const loadSubjectData = () => {
 
             loadTeachers();
 
-        },
-        (err) => {
-            console.log(err)
         })
 
 }
@@ -126,9 +119,6 @@ const loadRoomData = () => {
                 code: String(cls.id) // convert number to string, if needed
             }));
 
-        },
-        (err) => {
-            console.log(err)
         })
 
 }
@@ -160,9 +150,6 @@ const loadSubCodeData = () => {
 
 
             loadTeachers();
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
@@ -188,9 +175,6 @@ const loadTeachers = () => {
                 }
 
             }
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
@@ -201,13 +185,51 @@ function hideDialog() {
     emit('onClose');
 }
 
+const validateForm = () => {
+    errors.value = {};
+    
+    if (!subjectInfo.value.yearLevelData) {
+        errors.value.yearLevel = 'Year level is required';
+    }
+    
+    if (!subjectInfo.value.sectionData) {
+        errors.value.section = 'Section is required';
+    }
+    
+    // Validate subjects
+    subjects.value.forEach((subject, index) => {
+        if (!subject.adviserData) {
+            errors.value[`adviser_${index}`] = 'Adviser is required';
+        }
+        // if (!subject.roomData) {
+        //     errors.value[`room_${index}`] = 'Room is required';
+        // }
+        if (!subject.startTime) {
+            errors.value[`startTime_${index}`] = 'Start time is required';
+        }
+        if (!subject.endTime) {
+            errors.value[`endTime_${index}`] = 'End time is required';
+        }
+        if (subject.startTime && subject.endTime) {
+            const start = new Date(`2000-01-01T${Helper.toTime(subject.startTime)}`);
+            const end = new Date(`2000-01-01T${Helper.toTime(subject.endTime)}`);
+            if (start >= end) {
+                errors.value[`timeRange_${index}`] = 'End time must be after start time';
+            }
+        }
+    });
+    
+    return Object.keys(errors.value).length === 0;
+};
+
 function saveSubjectCode() {
-    console.log(",,,, ", subjects.value)
-
-
-    console.log("Helper.getCurrentDate() ", Helper.getCurrentDate())
-
-
+    if (!validateForm()) {
+        toast.add({ severity: 'warn', summary: 'Validation Error', detail: 'Please fix the errors before saving', group: 'tl', life: 3000 });
+        return;
+    }
+    
+    isLoading.value = true;
+    
     let tmpSubjects = [];
     for (const sub of subjects.value) {
         let startTime = sub.startTime
@@ -226,9 +248,6 @@ function saveSubjectCode() {
             endTime = endTime + ":00"
         }
 
-
-
-        console.log("startTime ", startTime)
         tmpSubjects.push({
             code: sub.code,
             id: sub.id,
@@ -245,14 +264,12 @@ function saveSubjectCode() {
         subjects: tmpSubjects,
         section: subjectInfo.value.sectionData ? subjectInfo.value.sectionData.code : null,
     }
-
-    console.log("newSubjectCode, ", newSubjectCode)
-
+    
     // Subject new subject
     let model = new SubjectCodeRequest();
 
     model.post(newSubjectCode, (data) => {
-        console.log("response ", data)
+        isLoading.value = false;
         if (data.status == "SUCCESS") {
             toast.add({ severity: 'success', summary: 'Success', detail: data.message, group: 'tl', life: 3000 });
             hideDialog()
@@ -260,7 +277,7 @@ function saveSubjectCode() {
             toast.add({ severity: 'error', summary: 'Error', detail: data.message, group: 'tl', life: 3000 });
         }
     }, (err) => {
-        console.log("error ", err)
+        isLoading.value = false;
         toast.add({ severity: 'error', summary: 'Error', detail: err.message, group: 'tl', life: 3000 });
     })
 }
@@ -268,76 +285,272 @@ function saveSubjectCode() {
 </script>
 
 <template>
-    <Dialog v-model:visible="isOpen" :style="{ width: '80%' }" header="Subject Details" :modal="true"
-        @hide="hideDialog">
-        <Fluid>
-            <div class="flex flex-col md:flex-row">
-                <div class="md:w-1/2">
-                    <div class="card flex flex-col gap-4">
-                        <div class="font-semibold text-xl">Year Level & Section</div>
-                        <div class="flex flex-col md:flex-row">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="email1">Year Level</label>
-                                <Select id="state" v-model="subjectInfo.yearLevelData" :options="yearLevels"
-                                    optionLabel="name" @change="fetchSectionAndSubject" placeholder="Select One"
-                                    class="w-full" :disabled="props.subject != undefined"></Select>
+    <Dialog v-model:visible="isOpen" :style="{ width: '95%', maxWidth: '1200px' }" 
+            header="Subject Assignment & Schedule" :modal="true" @hide="hideDialog" 
+            :closable="!isLoading" class="subject-assignment-dialog">
+            
+        <div class="min-h-[600px] p-2">
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-6 border border-blue-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="pi pi-book text-2xl text-blue-600"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Subject Assignment</h2>
+                </div>
+                <p class="text-gray-600">Configure subject schedules, assign teachers, and set room assignments for the selected section.</p>
+            </div>
+
+            <!-- Form Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Year Level & Section Card -->
+                <Card class="h-fit">
+                    <template #title>
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-users text-blue-500"></i>
+                            Class Information
+                        </div>
+                    </template>
+                    <template #content>
+                        <div class="space-y-4">
+                            <div class="field">
+                                <label for="yearLevel" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Year Level <span class="text-red-500">*</span>
+                                </label>
+                                <Select 
+                                    id="yearLevel" 
+                                    v-model="subjectInfo.yearLevelData" 
+                                    :options="yearLevels"
+                                    optionLabel="name" 
+                                    @change="fetchSectionAndSubject" 
+                                    placeholder="Select Year Level"
+                                    class="w-full" 
+                                    :disabled="props.subject != undefined"
+                                    :class="{ 'p-invalid': errors.yearLevel }"
+                                />
+                                <small v-if="errors.yearLevel" class="p-error">{{ errors.yearLevel }}</small>
+                            </div>
+                            
+                            <div class="field">
+                                <label for="section" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Section <span class="text-red-500">*</span>
+                                </label>
+                                <Select 
+                                    id="section" 
+                                    v-model="subjectInfo.sectionData" 
+                                    :options="sections"
+                                    optionLabel="name" 
+                                    placeholder="Select Section" 
+                                    class="w-full"
+                                    :class="{ 'p-invalid': errors.section }"
+                                />
+                                <small v-if="errors.section" class="p-error">{{ errors.section }}</small>
                             </div>
                         </div>
-                        <div class="flex flex-col md:flex-row">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="email1">Section</label>
-                                <Select id="state" v-model="subjectInfo.sectionData" :options="sections"
-                                    optionLabel="name" placeholder="Select One" class="w-full"></Select>
+                    </template>
+                </Card>
+
+                <!-- Summary Card -->
+                <Card class="h-fit">
+                    <template #title>
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-info-circle text-green-500"></i>
+                            Assignment Summary
+                        </div>
+                    </template>
+                    <template #content>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                <span class="font-medium text-blue-800">Total Subjects:</span>
+                                <span class="font-bold text-blue-900">{{ subjects.length }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                <span class="font-medium text-green-800">Assigned Teachers:</span>
+                                <span class="font-bold text-green-900">{{ subjects.filter(s => s.adviserData).length }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                                <span class="font-medium text-purple-800">Assigned Rooms:</span>
+                                <span class="font-bold text-purple-900">{{ subjects.filter(s => s.roomData).length }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                                <span class="font-medium text-orange-800">Scheduled Times:</span>
+                                <span class="font-bold text-orange-900">{{ subjects.filter(s => s.startTime && s.endTime).length }}</span>
+                            </div>
+                        </div>
+                    </template>
+                </Card>
+            </div>
+
+            <!-- Subjects Schedule Section -->
+            <Card v-if="subjects.length > 0">
+                <template #title>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-calendar text-indigo-500"></i>
+                            Subject Schedules
+                        </div>
+                        <Tag :value="`${subjects.length} Subjects`" severity="info" />
+                    </div>
+                </template>
+                <template #content>
+                    <div class="space-y-6">
+                        <div v-for="(subject, index) in subjects" :key="index" 
+                             class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            
+                            <!-- Subject Header -->
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-bold text-indigo-600">{{ index + 1 }}</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">{{ subject.name }}</h4>
+                                        <p class="text-sm text-gray-500">Code: {{ subject.code || subject.subjectCode }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <Tag v-if="subject.adviserData && subject.roomData && subject.startTime && subject.endTime" 
+                                         value="Complete" severity="success" />
+                                    <Tag v-else value="Incomplete" severity="warning" />
+                                </div>
+                            </div>
+
+                            <!-- Subject Form Fields -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <!-- Teacher Assignment -->
+                                <div class="field">
+                                    <label :for="`adviser_${index}`" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="pi pi-user text-blue-500 mr-1"></i>
+                                        Teacher <span class="text-red-500">*</span>
+                                    </label>
+                                    <Select 
+                                        :id="`adviser_${index}`"
+                                        v-model="subject.adviserData" 
+                                        :options="teachers"
+                                        :showClear="true" 
+                                        optionLabel="name" 
+                                        placeholder="Select Teacher" 
+                                        class="w-full"
+                                        :class="{ 'p-invalid': errors[`adviser_${index}`] }"
+                                    />
+                                    <small v-if="errors[`adviser_${index}`]" class="p-error">{{ errors[`adviser_${index}`] }}</small>
+                                </div>
+
+                                <!-- Room Assignment -->
+                                <div class="field">
+                                    <label :for="`room_${index}`" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="pi pi-home text-green-500 mr-1"></i>
+                                        Room <span class="text-red-500">*</span>
+                                    </label>
+                                    <Select 
+                                        :id="`room_${index}`"
+                                        v-model="subject.roomData" 
+                                        :options="rooms" 
+                                        optionLabel="name"
+                                        placeholder="Select Room" 
+                                        class="w-full"
+                                        :class="{ 'p-invalid': errors[`room_${index}`] }"
+                                    />
+                                    <small v-if="errors[`room_${index}`]" class="p-error">{{ errors[`room_${index}`] }}</small>
+                                </div>
+
+                                <!-- Start Time -->
+                                <div class="field">
+                                    <label :for="`startTime_${index}`" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="pi pi-clock text-purple-500 mr-1"></i>
+                                        Start Time <span class="text-red-500">*</span>
+                                    </label>
+                                    <DatePicker 
+                                        :id="`startTime_${index}`"
+                                        v-model="subject.startTime" 
+                                        timeOnly 
+                                        fluid
+                                        class="w-full" 
+                                        dateFormat="HH:mm"
+                                        :class="{ 'p-invalid': errors[`startTime_${index}`] || errors[`timeRange_${index}`] }"
+                                    />
+                                    <small v-if="errors[`startTime_${index}`]" class="p-error">{{ errors[`startTime_${index}`] }}</small>
+                                </div>
+
+                                <!-- End Time -->
+                                <div class="field">
+                                    <label :for="`endTime_${index}`" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="pi pi-clock text-orange-500 mr-1"></i>
+                                        End Time <span class="text-red-500">*</span>
+                                    </label>
+                                    <DatePicker 
+                                        :id="`endTime_${index}`"
+                                        v-model="subject.endTime" 
+                                        timeOnly 
+                                        fluid
+                                        class="w-full"
+                                        :class="{ 'p-invalid': errors[`endTime_${index}`] || errors[`timeRange_${index}`] }"
+                                    />
+                                    <small v-if="errors[`endTime_${index}`]" class="p-error">{{ errors[`endTime_${index}`] }}</small>
+                                    <small v-if="errors[`timeRange_${index}`]" class="p-error">{{ errors[`timeRange_${index}`] }}</small>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </template>
+            </Card>
 
-                </div>
-                <div class="md:w-1/2">
-                </div>
-            </div>
-
-            <div class="flex">
-                <div class="card flex flex-col gap-4 w-full">
-                    <div class="font-semibold text-xl">Subjects Schedule</div>
-                    <div class="flex flex-col md:flex-row gap-4" v-for="(subjectSchedule, ind) in subjects">
-                        <div class="flex flex-wrap gap-2 w-full" v-if="subjectSchedule.code">
-                            <label for="name1" v-if="ind == 0">Subject Code</label>
-                            <InputText id="name1" type="text" v-model="subjectSchedule.code" :disabled="true" />
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <label for="name1" v-if="ind == 0">Subject Name</label>
-                            <InputText id="name1" type="text" v-model="subjectSchedule.name" :disabled="true" />
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <label for="name1" v-if="ind == 0">Adviser</label>
-                            <Select id="state" v-model="subjectSchedule.adviserData" :options="teachers"
-                                :showClear="true" optionLabel="name" placeholder="Select One" class="w-full"></Select>
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <label for="name1" v-if="ind == 0">Bdlg & Room</label>
-                            <Select id="state" v-model="subjectSchedule.roomData" :options="rooms" optionLabel="name"
-                                placeholder="Select One" class="w-full"></Select>
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <label for="email1" v-if="ind == 0">Start</label>
-                            <DatePicker id="datepicker-timeonly" v-model="subjectSchedule.startTime" timeOnly fluid
-                                class="w-full" dateFormat="HH:mm" />
-                        </div>
-                        <div class="flex flex-wrap gap-2 w-full">
-                            <label for="email1" v-if="ind == 0">End</label>
-                            <DatePicker id="datepicker-timeonly" v-model="subjectSchedule.endTime" timeOnly fluid
-                                class="w-full" />
+            <!-- Empty State -->
+            <Card v-else class="text-center py-12">
+                <template #content>
+                    <div class="flex flex-col items-center gap-4">
+                        <i class="pi pi-book text-6xl text-gray-300"></i>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-500 mb-2">No Subjects Available</h3>
+                            <p class="text-gray-400">Please select a year level and section to view subjects.</p>
                         </div>
                     </div>
+                </template>
+            </Card>
+        </div>
 
-                </div>
-            </div>
-        </Fluid>
         <template #footer>
-            <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-            <Button label="Save" icon="pi pi-check" @click="saveSubjectCode" />
+            <div class="flex justify-between items-center w-full">
+                <div class="text-sm text-gray-500">
+                    <i class="pi pi-info-circle mr-1"></i>
+                    {{ subjects.length }} subject(s) to be saved
+                </div>
+                <div class="flex gap-2">
+                    <Button 
+                        label="Cancel" 
+                        icon="pi pi-times" 
+                        severity="secondary"
+                        outlined
+                        @click="hideDialog" 
+                        :disabled="isLoading"
+                    />
+                    <Button 
+                        label="Save Assignment" 
+                        icon="pi pi-check" 
+                        @click="saveSubjectCode"
+                        :loading="isLoading"
+                        :disabled="subjects.length === 0"
+                    />
+                </div>
+            </div>
         </template>
     </Dialog>
-
 </template>
+
+<style scoped>
+.subject-assignment-dialog :deep(.p-dialog-content) {
+    padding: 0;
+}
+
+.field {
+    margin-bottom: 0;
+}
+
+.p-invalid {
+    border-color: #f87171;
+}
+
+.p-error {
+    color: #f87171;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+</style>

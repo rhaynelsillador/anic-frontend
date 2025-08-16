@@ -41,10 +41,15 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults()) // ✅ enable CORS handling from CorsConfig
         .authorizeHttpRequests(auth -> auth
+            // Permit all non-API routes for SPA and static assets
             .requestMatchers(
                 "/api/login",
-                "/", "/index.html", "/static/**", "/assets/**",
-                "/api/auth/login", "/api/auth/loginStatus", "/api/auth/logout"
+                "/api/auth/login", "/api/auth/loginStatus", "/api/auth/logout",
+                "/api/v1/setup/**",  // Allow public access to setup wizard endpoints
+                "/uploads/**"  // Allow public access to uploaded files
+            ).permitAll()
+            .requestMatchers(
+                "/", "/index.html", "/static/**", "/assets/**", "/favicon.ico", "/**"
             ).permitAll()
             .anyRequest().authenticated()
         )

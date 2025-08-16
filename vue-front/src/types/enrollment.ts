@@ -1,3 +1,4 @@
+import { c } from "vite/dist/node/types.d-aGj9QkWt";
 import ajax from "../api/ajax";
 import { studentApi } from "../const";
 import { BaseResponse } from "./base_response";
@@ -31,7 +32,6 @@ export default class EnrollmentResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<EnrollmentResponse>(studentApi.EnrollUrl+query)
       .then(res => {
-          console.log(res.data)
           if (success) success(res.data)
       })
       .catch(err => {
@@ -40,7 +40,6 @@ export default class EnrollmentResponse {
   }
 
   public postData(params : {}, success: (data: BaseResponse) => void, error: (err: any) => void): void {
-    console.log(params)
     ajax.post<BaseResponse>(studentApi.EnrollUrl+"/new", params)
         .then(res => {
             if (success) success(res.data)

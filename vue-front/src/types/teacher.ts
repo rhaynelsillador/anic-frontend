@@ -26,7 +26,6 @@ export default class TeacherResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<TeacherResponse>(teacherApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -38,7 +37,6 @@ export default class TeacherResponse {
   public create(teacher : Teacher, success: (data: TeacherResponse) => void, error: (err: any) => void): void {
     ajax.post<TeacherResponse>(teacherApi.BaseUrl, teacher)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -51,7 +49,6 @@ export default class TeacherResponse {
   public update(teacher : Teacher, success: (data: TeacherResponse) => void, error: (err: any) => void): void {
     ajax.put<TeacherResponse>(teacherApi.BaseUrl+'/'+teacher.id, teacher)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })

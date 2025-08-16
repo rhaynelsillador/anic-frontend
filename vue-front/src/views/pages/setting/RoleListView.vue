@@ -40,9 +40,6 @@ const loadRoles = () => {
     model.getData(filters,
         (data) => {
             roles.value = data.data
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
@@ -57,7 +54,6 @@ const submitForm = (e) => {
             }
         },
         (err) => {
-            console.log(err)
             toast.add({ severity: 'error', summary: 'Error', detail: err.message, life: 3000 });
             loadRoles()
         })

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript of Records</title>
+    <style>
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body * {
+                visibility: hidden;
+            }
+            
+            #transcript-content,
+            #transcript-content * {
+                visibility: visible;
+            }
+            
+            #transcript-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .transcript-container {
+                padding: 10px !important;
+            }
+            
+            .transcript-document {
+                padding: 20px !important;
+            }
+            
+            .school-details {
+                margin-left: 0 !important;
+                margin-top: 20px !important;
+            }
+            
+            .student-info-grid {
+                flex-direction: column !important;
+            }
+            
+            .student-photo-section {
+                width: 100% !important;
+                display: flex !important;
+                justify-content: center !important;
+            }
+            
+            .summary-grid {
+                flex-direction: column !important;
+                gap: 20px !important;
+            }
+            
+            .signatures-section {
+                flex-direction: column !important;
+                gap: 30px !important;
+                align-items: center !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 210mm; margin: 0 auto; padding: 20px; font-family: 'Times New Roman', serif;">
+        <!-- Transcript Document -->
+        <div style="background: white; padding: 30px; box-shadow: 0 0 20px rgba(0,0,0,0.1); min-height: 297mm;" id="transcript-content">
+            <!-- Header -->
+            <div style="display: flex; align-items: center; margin-bottom: 30px; border-bottom: 3px solid #2563eb; padding-bottom: 20px;">
+                <div style="margin-right: 30px;">
+                    <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc; border-radius: 8px;">
+                        🏫
+                    </div>
+                </div>
+                
+                <div style="flex: 1; text-align: center;">
+                    <h1 style="font-size: 24px; font-weight: bold; color: #1e40af; margin: 0 0 8px 0; text-transform: uppercase;">Sample High School</h1>
+                    <p style="font-size: 12px; margin: 4px 0; color: #666;">123 Education Street, Learning City, Knowledge Province 1234</p>
+                    <p style="font-size: 12px; margin: 4px 0; color: #666;">Tel: (02) 123-4567 | Email: registrar@samplehs.edu.ph</p>
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: bold; margin: 20px 0 5px 0; color: #1e40af; text-transform: uppercase; letter-spacing: 2px;">TRANSCRIPT OF RECORDS</h2>
+                        <p style="font-size: 12px; color: #666; margin: 0;">Official Academic Record</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Information -->
+            <div style="margin-bottom: 30px;">
+                <div style="display: flex; gap: 30px;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; margin-bottom: 8px; align-items: baseline;">
+                            <span style="font-weight: bold; width: 120px; flex-shrink: 0;">Student Name:</span>
+                            <span style="flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-left: 10px;">Juan Pedro Dela Cruz</span>
+                        </div>
+                        <div style="display: flex; margin-bottom: 8px; align-items: baseline;">
+                            <span style="font-weight: bold; width: 120px; flex-shrink: 0;">Student ID:</span>
+                            <span style="flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-left: 10px;">SHS-2024-001</span>
+                        </div>
+                        <div style="display: flex; margin-bottom: 8px; align-items: baseline;">
+                            <span style="font-weight: bold; width: 120px; flex-shrink: 0;">LRN:</span>
+                            <span style="flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-left: 10px;">123456789012</span>
+                        </div>
+                        <div style="display: flex; margin-bottom: 8px; align-items: baseline;">
+                            <span style="font-weight: bold; width: 120px; flex-shrink: 0;">Date of Birth:</span>
+                            <span style="flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-left: 10px;">May 15, 2008</span>
+                        </div>
+                        <div style="display: flex; margin-bottom: 8px; align-items: baseline;">
+                            <span style="font-weight: bold; width: 120px; flex-shrink: 0;">Gender:</span>
+                            <span style="flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-left: 10px;">Male</span>
+                        </div>
+                        <div style="display: flex; margin-bottom: 8px; align-items: baseline;">
+                            <span style="font-weight: bold; width: 120px; flex-shrink: 0;">Address:</span>
+                            <span style="flex: 1; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-left: 10px;">456 Student Avenue, Hometown City, Province 5678</span>
+                        </div>
+                    </div>
+                    
+                    <div style="width: 120px; flex-shrink: 0;">
+                        <div style="width: 120px; height: 140px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; background: #e5e7eb; color: #6b7280;">
+                            <span style="font-size: 24px; font-weight: bold;">JDC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Records by School Year -->
+            <div style="margin-bottom: 30px;">
+                <!-- Grade 11 Records -->
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; font-weight: bold; background: #f3f4f6; padding: 10px; border: 1px solid #d1d5db; margin-bottom: 0; text-align: center; color: #1f2937;">
+                        School Year 2022-2023 - Grade 11
+                    </h3>
+                    
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 12%;">Subject Code</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 30%;">Subject Name</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Units</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q1</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q2</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q3</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q4</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 10%;">Final Grade</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 12%;">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">ENG101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">English for Academic and Professional Purposes</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">FIL101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Komunikasyon at Pananaliksik sa Wika at Kulturang Pilipino</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">85</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">MATH101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">General Mathematics</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">92</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">SCI101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Earth and Life Science</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">85</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">SS101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Contemporary Philippine Arts from the Regions</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">PE101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Physical Education and Health</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">2</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">92</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">93</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">94</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">93</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">EMP101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Empowerment Technologies</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">RES101</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Research Project</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">2</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">85</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">84</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #f3f4f6; font-weight: bold;">
+                                <td colspan="2" style="border: 1px solid #333; padding: 6px 4px; text-align: right; padding-right: 10px;">School Year Average:</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold; color: #1e40af;">22</td>
+                                <td colspan="4" style="border: 1px solid #333; padding: 6px 4px;"></td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold; color: #1e40af;">88.64</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; color: #059669; font-weight: bold;">PROMOTED</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Grade 12 Records -->
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; font-weight: bold; background: #f3f4f6; padding: 10px; border: 1px solid #d1d5db; margin-bottom: 0; text-align: center; color: #1f2937;">
+                        School Year 2023-2024 - Grade 12
+                    </h3>
+                    
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                        <thead>
+                            <tr>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 12%;">Subject Code</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 30%;">Subject Name</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Units</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q1</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q2</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q3</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 8%;">Q4</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 10%;">Final Grade</th>
+                                <th style="border: 1px solid #333; padding: 6px 4px; text-align: center; background: #f9f9f9; font-weight: bold; font-size: 10px; width: 12%;">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">ENG201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Reading and Writing Skills</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">92</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">FIL201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Pagbasa at Pagsusuri ng Iba't Ibang Teksto Tungo sa Pananaliksik</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">MATH201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Statistics and Probability</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">92</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">94</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">93</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">93</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">SCI201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Physical Science</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">SS201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Understanding Culture, Society and Politics</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">93</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">92</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">92</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">PE201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Physical Education and Health</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">2</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">94</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">95</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">93</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">96</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">95</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">PRAC201</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Practical Research 2</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">3</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">91</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">90</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">IMMERSION</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: left;">Work Immersion</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">2</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">87</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">89</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold;">88</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-size: 9px;">PASSED</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #f3f4f6; font-weight: bold;">
+                                <td colspan="2" style="border: 1px solid #333; padding: 6px 4px; text-align: right; padding-right: 10px;">School Year Average:</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold; color: #1e40af;">22</td>
+                                <td colspan="4" style="border: 1px solid #333; padding: 6px 4px;"></td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; font-weight: bold; color: #1e40af;">90.86</td>
+                                <td style="border: 1px solid #333; padding: 6px 4px; text-align: center; color: #059669; font-weight: bold;">GRADUATED</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Overall Summary -->
+            <div style="margin-bottom: 30px; border: 2px solid #2563eb; padding: 20px; background: #f8fafc;">
+                <div style="display: flex; gap: 40px;">
+                    <div style="text-align: center; flex: 1;">
+                        <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #1e40af;">General Weighted Average</h4>
+                        <div style="font-size: 32px; font-weight: bold; color: #dc2626; margin-bottom: 5px;">89.75</div>
+                        <div style="font-size: 14px; color: #059669; font-weight: bold;">Satisfactory</div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #1e40af;">Academic Statistics</h4>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 5px 0; border-bottom: 1px dotted #ccc;">
+                            <span style="font-weight: bold;">Total Units Earned:</span>
+                            <span style="color: #dc2626; font-weight: bold;">44</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 5px 0; border-bottom: 1px dotted #ccc;">
+                            <span style="font-weight: bold;">Years Completed:</span>
+                            <span style="color: #dc2626; font-weight: bold;">2</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 5px 0; border-bottom: 1px dotted #ccc;">
+                            <span style="font-weight: bold;">Academic Status:</span>
+                            <span style="color: #dc2626; font-weight: bold;">With Honors</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 40px; border-top: 2px solid #333; padding-top: 20px;">
+                <div style="margin-bottom: 20px;">
+                    <p style="text-align: center; font-style: italic; margin-bottom: 30px; color: #374151;">
+                        This is to certify that the above is a true and correct transcript of the academic record of the above-named student.
+                    </p>
+                    
+                    <div style="display: flex; justify-content: space-around; margin-bottom: 30px;">
+                        <div style="text-align: center; width: 200px;">
+                            <div style="border-bottom: 1px solid #333; margin-bottom: 5px; height: 40px;"></div>
+                            <p style="font-weight: bold; margin: 5px 0;">Registrar</p>
+                            <p style="font-size: 10px; color: #666;">Date: August 2, 2025</p>
+                        </div>
+                        
+                        <div style="text-align: center; width: 200px;">
+                            <div style="border-bottom: 1px solid #333; margin-bottom: 5px; height: 40px;"></div>
+                            <p style="font-weight: bold; margin: 5px 0;">Principal</p>
+                            <p style="font-size: 10px; color: #666;">Date: August 2, 2025</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; font-size: 10px; color: #666;">
+                    <p style="margin: 2px 0;">Generated on: August 2, 2025, 12:00 PM</p>
+                    <p style="margin: 2px 0;">Document ID: TOR-SHS-2024-001-1722566400000</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateSampleData() {
+            alert('Sample data generation functionality would be implemented here');
+        }
+
+        function printTranscript() {
+            window.print();
+        }
+
+        function downloadPDF() {
+            alert('PDF download functionality would be implemented here');
+        }
+    </script>
+</body>
+</html>

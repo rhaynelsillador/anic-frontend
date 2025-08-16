@@ -28,7 +28,7 @@ const props = defineProps({
 
 onMounted(() => {
     isOpen.value = props.dialog
-    subjectInfo.value = props.subject ?? {}
+    subjectInfo.value = props.subject ?? {active: true, yearLevel: '', code: '', units: 0, name: ''};
     loadYearLevel()
 });
 
@@ -37,9 +37,6 @@ const submitForm = () => {
     model.postData(subjectInfo.value,
         (data) => {
             hideDialog()
-        },
-        (err) => {
-            console.log(err)
         })
 
 }
@@ -52,9 +49,6 @@ const loadYearLevel = () => {
                 name: cls.name,
                 code: String(cls.id) // convert number to string, if needed
             }));
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
@@ -91,8 +85,7 @@ function hideDialog() {
                 </div>
 
                 <div class="flex flex-wrap gap-2 w-full">
-                    <label for="firstname2">Units</label>
-                    {{ subjectInfo.active }}
+                    <label for="firstname2">Status</label>
                     <Select v-model="subjectInfo.active" :options="statuses" optionValue="code" optionLabel="name" placeholder="Select" />
                 </div>
 

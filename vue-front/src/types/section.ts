@@ -26,7 +26,6 @@ export default class SectionResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<SectionResponse>(sectionApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -46,7 +45,6 @@ export default class SectionResponse {
   public postData(params : {}, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.post<BaseResponse>(sectionApi.BaseUrl, params)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -58,7 +56,6 @@ export default class SectionResponse {
   public putData(id: number, params : {}, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.put<BaseResponse>(sectionApi.BaseUrl+'/'+id, params)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })

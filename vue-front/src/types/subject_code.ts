@@ -29,7 +29,6 @@ export default class SubjectCodeResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<SubjectCodeResponse>(subjectCodeApi.BaseUrl+query)
       .then(res => {
-          console.log(res.data)
           if (success) success(res.data)
           
       })
@@ -41,7 +40,6 @@ export default class SubjectCodeResponse {
   public getAdviserSubjects(filter : {}, success: (data: SubjectCodeResponse) => void, error: (err: any) => void): void {
     ajax.get<SubjectCodeResponse>(subjectCodeApi.BaseUrl+'/adviser/'+filter.adviser+'/year/'+filter.year)
       .then(res => {
-          console.log(res.data)
           if (success) success(res.data)
           
       })
@@ -53,7 +51,6 @@ export default class SubjectCodeResponse {
   public getSubjectStudents(code : string, success: (data: SubjectCodeResponse) => void, error: (err: any) => void): void {
     ajax.get<SubjectCodeResponse>(subjectCodeApi.BaseUrl+'/code/'+code)
       .then(res => {
-          console.log(res.data)
           if (success) success(res.data)
           
       })

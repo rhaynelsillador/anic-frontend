@@ -21,10 +21,8 @@ export default class RoomResponse {
 
   public getData(filter : Filter, success: (data: RoomResponse) => void, error: (err: any) => void): void {
     let query = new FilterParser().toUriParams(filter);
-    console.log(query)
     ajax.get<RoomResponse>(roomApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {

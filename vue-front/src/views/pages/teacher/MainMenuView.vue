@@ -6,6 +6,7 @@ import { useRoute } from 'vue-router';
 import DashboardView from './DashboardView.vue';
 import GradeView from './GradeView.vue';
 import SubjectListView from './SubjectListView.vue';
+import router from '@/router';
 
 const route = useRoute()
 const menu = ref({
@@ -31,7 +32,6 @@ const nestedMenuitems = ref([
     },
     {
         label: '|',
-        // icon: 'pi pi-fw pi-home'
     },
     {
         label: 'GradesView',
@@ -41,37 +41,54 @@ const nestedMenuitems = ref([
 ]);
 
 watch(() => route.fullPath, () => {
-    console.log(route)
-    initData()
+    console.log('routerouteroute ', route.fullPath)
+    initData(0)
 })
 
 onMounted(() => {
-    initData()
+    initData(1)
 });
 
-const initData = () => {
+const initData = (type) => {
     // Access query parameters
     const subject = route.query.subject
+    const tab = route.query.tab
+
     teacherId.value = route.query.teacher
 
-    console.log(subject)
-    if (subject == undefined) {
-        menu.value.to = "Dashboard"
-    } else {
-        menu.value.to = "Attendance"
+    if(teacherId.value == undefined || teacherId.value == null) {
+        if (globalStore.loginAccount?.account?.accountRef) {
+            teacherId.value = globalStore.loginAccount?.account?.accountRef
+        }
     }
 
-    if (teacherId.value) {
-        getSubjects(teacherId.value)
-    } else {
-        if (globalStore.loginAccount.accountRef) {
-            teacherId.value = globalStore.loginAccount.accountRef
-            getSubjects(teacherId.value)
-            console.log(">><<")
+    if(type == 1 || route.fullPath == "/teacher/index"){
+        if (subject == undefined || tab == undefined) {
+            menu.value.to = "Dashboard"
+            console.log("menu.value.to 69", menu.value.to)
         } else {
-            nestedMenuitems.value = nestedMenuitems.value.filter(d => d.label == "Home")
-        }
 
+            console.log("menu.value.to else ", menu.value.to)
+            if (tab == "Attendance") {
+                menu.value.to = "Attendance"
+            }else if (tab == "GradesView") {
+                menu.value.to = "GradesView"
+                console.log("menu.value.to 76", menu.value.to)
+            } else {
+                menu.value.to = "Dashboard"
+            }
+        }
+        if (teacherId.value) {
+            getSubjects(teacherId.value)
+        } else {
+            if (globalStore.loginAccount?.account?.accountRef) {
+                teacherId.value = globalStore.loginAccount?.account?.accountRef
+                getSubjects(teacherId.value)
+            } else {
+                nestedMenuitems.value = nestedMenuitems.value.filter(d => d.label == "Home")
+            }
+
+        }
     }
 }
 
@@ -83,7 +100,7 @@ const getSubjects = (teacherId) => {
                 subjects.value = data.data;
                 let menuSubjects = data.data.map(cls => ({
                     label: cls.subjectName,
-                    to: 'Subject',
+                    to: 'Attendance',
                     id: cls.id,
                     code: cls.code,
                     yearLevel: cls.yearLevel,
@@ -91,7 +108,8 @@ const getSubjects = (teacherId) => {
                 }));
                 nestedMenuitems.value.find(d => d.label == "Attendance").items = menuSubjects
                 const subject = route.query.subject
-                if (subject) {
+                const tab = route.query.tab
+                if (subject && tab == "Attendance") {
                     let activeSubj = menuSubjects.find(d => d.label == subject)
                     menu.value = activeSubj
                     if (activeSubj && subjectStudentList.value) {
@@ -112,8 +130,21 @@ const getSubjects = (teacherId) => {
                     icon: 'pi pi-fw pi-graduation-cap' // convert number to string, if needed
                 }));
 
-
                 nestedMenuitems.value.find(d => d.label == "GradesView").items = menuStudentGrades
+
+                if (subject && tab == "GradesView") {
+                    let activeSubj = menuStudentGrades.find(d => d.label == subject)
+                    console.log("activeSubj activeSubj ", activeSubj)
+                    menu.value = activeSubj
+                    
+                    if (activeSubj && studentGradesViewList.value) {
+                        studentGradesViewList.value.reloadData(menu.value)
+                    } else {
+                        menu.value = {
+                            to: "Dashboard"
+                        }
+                    }
+                }
 
             }
 
@@ -127,14 +158,19 @@ const getSubjects = (teacherId) => {
 
 const onMenuClick = (e) => {
     if (e.to) {
+
+    console.log("Menu clicked: ", e.to);
         menu.value = e
         console.log("menu ", menu.value)
+        var teacherId = route.query.teacher
+        router.push('/teacher/index?subject=' + menu.value.label + '&tab=' + menu.value.to + '&teacher=' + teacherId)
         setTimeout(() => {
             if (subjectStudentList.value) {
                 subjectStudentList.value.reloadData(menu.value); // Call the method from child
             } else if (studentGradesViewList && studentGradesViewList.value) {
                 studentGradesViewList.value.reloadData(menu.value); // Call the method from child
             }
+
         }, 100)
 
     }
@@ -162,9 +198,8 @@ const onMenuClick = (e) => {
             </template>
         </Menubar>
     </div>
-
     <DashboardView v-if="menu && menu.to == 'Dashboard'"></DashboardView>
-    <SubjectListView v-else-if="menu && menu.to == 'Subject'" :subject="menu" ref="subjectStudentList">
+    <SubjectListView v-else-if="menu && menu.to == 'Attendance'" :subject="menu" ref="subjectStudentList">
     </SubjectListView>
     <GradeView v-else-if="menu && menu.to == 'GradesView'" :subject="menu" ref="studentGradesViewList"></GradeView>
 </template>

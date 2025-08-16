@@ -1,4 +1,4 @@
-import { adminApi, apiAuth } from '@/const';
+import { adminApi, apiAuth, setupApi } from '@/const';
 import router from '@/router';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
@@ -14,13 +14,13 @@ const isLogin = ref(false);
 const loginAccount = ref({});
 const schoolYears = ref([]);
 const schoolYearsLoaded = ref(false);
+const setupData = ref(null);
 
 export const useGlobalStore = defineStore('global', () => {
 
   isLogin.value = localStorage.getItem('isLogin');
 
     const fetchGlobalConfig = async () =>  {
-      console.log("fetching config....")
       ajax.get(adminApi.config)
       .then(res => {
           appConfig.value = res.data.data
@@ -34,47 +34,59 @@ export const useGlobalStore = defineStore('global', () => {
         isLoaded.value = true
         // isLogin.value = true
         localStorage.setItem('isLogin', isLogin.value);
-        console.log("Config fetch error : ", isLogin)
       })
     }
 
     const getLoginAccount = async () =>  {
-      console.log("fetching loginAccount....")
       ajax.get(apiAuth.LoginAccount)
       .then(res => {
-        console.log(">>>> ", res)
           loginAccount.value = res.data.data
       })
       .catch(err => {
         loginAccount.value = {}
-        console.log("loginAccount fetch error : ", err)
       })
     }
 
     const fetchSchoolYears = async () => {
       if (schoolYearsLoaded.value) {
-        console.log("School years already loaded, skipping fetch")
         return;
       }
-      
-      console.log("fetching school years....")
+  
       let model = new SchoolYearResponse()
       model.getData({ rows: 1000 },
         (data) => {
           schoolYears.value = data.data;
           schoolYearsLoaded.value = true;
-          console.log("School years loaded:", data.data.length, "records")
         },
         (err) => {
-          console.log('Error fetching school years:', err);
           schoolYearsLoaded.value = true; // Mark as loaded even on error to prevent infinite retries
         })
     }
     const checkLoginState = async () =>  {
+      // First check if setup is complete
+      try {
+        const setupResponse = await ajax.get(setupApi.BaseUrl + '/status')
+        if (setupResponse.data && setupResponse.data.data) {
+          setupData.value = setupResponse.data.data
+          if (!setupData.value.isSetupComplete) {
+            isLoaded.value = true
+            router.push('/setup')
+            return
+          }
+
+          document.title = setupData.value.systemName || "E-System";
+        }
+      } catch (setupError) {
+        // If setup check fails, redirect to setup wizard as a safety measure
+        isLoaded.value = true
+        router.push('/setup')
+        return
+      }
+
+      // Setup is complete, proceed with normal login check
       await ajax.get(apiAuth.LoginStatus)
       .then(res => {
           if(res.data == true){
-            console.log("Detected as loggedin user: Fetching config now ")
             fetchGlobalConfig()
             getLoginAccount()
             fetchSchoolYears()
@@ -85,7 +97,6 @@ export const useGlobalStore = defineStore('global', () => {
           }
       })
       .catch(err => {
-        console.log(err)
         // Handle 401 response code
         isLoaded.value = true
         localStorage.removeItem("isLogin")
@@ -100,9 +111,7 @@ export const useGlobalStore = defineStore('global', () => {
       .then(res => {
           isLogin.value = false
           localStorage.removeItem("isLogin")
-          console.log("Logout done 1")
           router.push("/auth/login")
-          console.log("Logout done 2")
       })
       .catch(err => {
           router.push("/auth/login")
@@ -117,6 +126,7 @@ export const useGlobalStore = defineStore('global', () => {
     loginAccount,
     schoolYears,
     schoolYearsLoaded,
+    setupData,
     checkLoginState,
     fetchGlobalConfig,
     getLoginAccount,

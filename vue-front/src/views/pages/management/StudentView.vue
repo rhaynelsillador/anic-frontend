@@ -19,10 +19,28 @@
 
             <Column field="studentId" header="Avatar" style="min-width: 5rem" :showFilterMenu="false" :sortable="false">
                 <template #body="{ data }">
-                    <Avatar @click="() => { router.push('/enrollment/student?id=' + data.id) }"
-                        :label="data.firstName ? data.firstName.substring(0, 1).toUpperCase() : ''" class="mr-2"
-                        :style="{ 'cursor': 'pointer', 'background-color': primaryColors[Math.floor(Math.random() * primaryColors.length)].palette['900'], color: '#ffffff' }"
-                        shape="circle"></Avatar>
+                    <div class="flex justify-center">
+                        <!-- Profile Picture Avatar -->
+                        <Avatar v-if="getStudentAvatarUrl(data)"
+                            @click="() => { router.push('/enrollment/student?id=' + data.id) }"
+                            :image="getStudentAvatarUrl(data)"
+                            class="cursor-pointer border-2 border-surface-200 hover:border-primary-500 transition-colors"
+                            style="width: 40px; height: 40px;"
+                            shape="circle" />
+                        <!-- Fallback to Initial Avatar -->
+                        <Avatar v-else
+                            @click="() => { router.push('/enrollment/student?id=' + data.id) }"
+                            :label="data.firstName ? data.firstName.substring(0, 1).toUpperCase() : '?'" 
+                            class="cursor-pointer border-2 border-surface-200 hover:border-primary-500 transition-colors"
+                            :style="{ 
+                                'width': '40px', 
+                                'height': '40px',
+                                'background-color': primaryColors[data.id % primaryColors.length].palette['900'], 
+                                'color': '#ffffff',
+                                'font-weight': 'bold'
+                            }"
+                            shape="circle" />
+                    </div>
                 </template>
             </Column>
 
@@ -156,12 +174,19 @@ import { onMounted, ref } from 'vue';
 import { genders, primaryColors, studentStatus } from '@/const';
 import StudentResponse from '@/types/student';
 import { useRouter } from 'vue-router';
+import { getProfilePictureUrl } from '@/config/app';
 
 
 const router = useRouter();
 const students = ref([]);
 const loadLazyTimeout = ref(null)
 const totalRecords = ref(0)
+
+// Helper function to get profile picture URL
+const getStudentAvatarUrl = (student) => {
+    const photoUrl = student.profilePictureUrl || student.photoUrl;
+    return getProfilePictureUrl(photoUrl);
+};
 
 const fTmp = {
     studentId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -204,14 +229,10 @@ const loadStudents = (filter) => {
         (data) => {
             students.value = data.data;
             totalRecords.value = data.page.totalCount;
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
 const reloadData = () => {
-    console.log(fTmp)
     filters.value = fTmp;
     loadStudents({
         filters: filters.value

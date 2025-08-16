@@ -73,7 +73,6 @@ function callChildMethod(index) {
 }
 
 const onSelect = (data) => {
-    console.log(data)
     selectedStudents.value = data
 }
 

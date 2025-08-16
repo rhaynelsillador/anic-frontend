@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="mb-6">
         <template #start>
-            <Button label="New" icon="pi pi-plus" severity="primary" class="mr-2" @click="openNew(null)" />
+            <Button :disabled="!isAdmin" label="New" icon="pi pi-plus" severity="primary" class="mr-2" @click="openNew(null)" />
         </template>
 
         <template #end>
@@ -18,7 +18,7 @@
             <template #loading> Loading teachers data. Please wait. </template>
             <Column field="code" header="Code" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
-                    <a href="javascript:void(0)" @click="data.locked ? null : openNew(data) ">{{ data.code }}</a>
+                    <a href="javascript:void(0)" @click="isAdmin ? data.locked ? null : openNew(data) : null">{{ data.code }}</a>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText style="max-width: 7rem" v-model="filterModel.value" type="text" @input="filterCallback()"
@@ -27,7 +27,7 @@
             </Column>
             <Column field="subjectCode" header="Subject Code" :showFilterMenu="false" :sortable="true">
                 <template #body="{ data }">
-                    {{ data.subjectCode }}
+                    {{ data.subjectCode }} ({{ data.subjectName }})
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText style="max-width: 10rem" v-model="filterModel.value" type="text"
@@ -51,7 +51,7 @@
                     </div>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" :disabled="isTeacher"
                         placeholder="Search by Last Name" />
                 </template>
             </Column>
@@ -161,12 +161,14 @@ import SubjectCodeResponse from '@/types/subject_code';
 import SubjectAssignmentFormView from './SubjectAssignmentFormView.vue';
 
 const globalStore = useGlobalStore();
+const isTeacher = ref(false)
+const isAdmin = ref(false)
 
 const fTmp = {
     code: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     subjectCode: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    adviser: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    schoolYear: { value: useGlobalStore().appConfig.schoolYear, matchMode: FilterMatchMode.IN },
+    adviser: { value: globalStore.loginAccount?.teacherInfo?.fullName, matchMode: FilterMatchMode.STARTS_WITH },
+    schoolYear: { value: globalStore.appConfig.schoolYear, matchMode: FilterMatchMode.IN },
     yearLevel: { value: null, matchMode: FilterMatchMode.EQUALS },
     room: { value: null, matchMode: FilterMatchMode.EQUALS },
     startTime: { value: null, matchMode: FilterMatchMode.EQUALS },
@@ -189,6 +191,8 @@ const subject = ref({});
 const schoolYears = computed(() => globalStore.schoolYears);
 
 onMounted(() => {
+    isTeacher.value = globalStore.loginAccount.account.roles.includes('Teacher');
+    isAdmin.value = globalStore.loginAccount.account.roles.includes('Admin');
     loadData({ filters: filters.value });
     // Ensure school years are loaded if not already
     if (!globalStore.schoolYearsLoaded) {
@@ -216,9 +220,6 @@ const loadData = (filter) => {
         (data) => {
             dataList.value = data.data;
             totalRecords.value = data.page.totalCount;
-        },
-        (err) => {
-            console.log(err)
         })
 }
 

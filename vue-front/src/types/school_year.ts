@@ -34,7 +34,6 @@ export default class SchoolYearResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<SchoolYearResponse>(schoolYearApi.BaseUrl + query)
       .then(res => {
-        console.log(res.data)
         if (success) success(res.data)
       })
       .catch(err => {
@@ -53,7 +52,6 @@ export default class SchoolYearResponse {
   public postData(params: any, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.post<BaseResponse>(schoolYearApi.BaseUrl, params)
       .then(res => {
-        console.log(res.data)
         if (success) success(res.data)
       })
       .catch(err => {
@@ -64,7 +62,6 @@ export default class SchoolYearResponse {
   public putData(id: number, params: any, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.put<BaseResponse>(schoolYearApi.BaseUrl + "/" + id, params)
       .then(res => {
-        console.log(res.data)
         if (success) success(res.data)
       })
       .catch(err => {
@@ -75,7 +72,6 @@ export default class SchoolYearResponse {
   public deleteData(id: number, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.delete<BaseResponse>(schoolYearApi.BaseUrl + "/" + id)
       .then(res => {
-        console.log(res.data)
         if (success) success(res.data)
       })
       .catch(err => {
@@ -86,7 +82,6 @@ export default class SchoolYearResponse {
   public initializeSchoolYear(params: any, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.post<BaseResponse>(schoolYearApi.BaseUrl + "/initialize", params)
       .then(res => {
-        console.log(res.data)
         if (success) success(res.data)
       })
       .catch(err => {

@@ -126,7 +126,6 @@ const submitForm = async () => {
     if (isEditMode.value && currentDocumentId.value) {
       // Update existing document
       response = await documentService.updateDocument(currentDocumentId.value, documentData)
-      console.log('Document updated:', response)
       toast.add({
         severity: 'success',
         summary: 'Success',
@@ -136,7 +135,6 @@ const submitForm = async () => {
     } else {
       // Create new document
       response = await documentService.createDocument(documentData)
-      console.log('Document created:', response)
       toast.add({
         severity: 'success',
         summary: 'Success',
@@ -274,6 +272,8 @@ onMounted(async () => {
   
   if (documentId && !isNaN(documentId)) {
     await loadDocument(documentId)
+  }else{
+    form.value.title = route.query.title || ''
   }
 })
 </script>

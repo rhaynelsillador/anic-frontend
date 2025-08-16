@@ -22,7 +22,6 @@ export default class GradeResponse {
   public getData(code : string, success: (data: GradeResponse) => void, error: (err: any) => void): void {
     ajax.get<GradeResponse>(gradeApi.BaseUrl+'/code/'+code)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -33,7 +32,6 @@ export default class GradeResponse {
   public postData(code: string, grades : Grade[], success: (data: GradeResponse) => void, error: (err: any) => void): void {
     ajax.post<GradeResponse>(gradeApi.BaseUrl+'/code/'+code, grades)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {

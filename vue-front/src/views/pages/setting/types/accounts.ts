@@ -1,5 +1,5 @@
 import ajax from "@/api/ajax";
-import { adminApi } from "@/const";
+import { accountApi, adminApi, ApiAccount } from "@/const";
 import { BaseResponse } from "@/types/base_response";
 import { Filter, FilterParser } from "@/types/Filter";
 
@@ -7,9 +7,13 @@ import { PageInfo } from "@/types/PageInfo";
 
 export interface Account {
   id: number;
-  studentId: number;
-  gradeScore: number;
-  gradingPeriod : number
+  username: string;
+  email: string;
+  password?: string;
+  roles: string[];
+  accountRef?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 
@@ -25,7 +29,6 @@ export default class AccountResponse {
       let query = new FilterParser().toUriParams(filter);
     ajax.get<AccountResponse>(adminApi.account+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -38,7 +41,6 @@ export default class AccountResponse {
     if(account.id > 0 ){
       ajax.put<BaseResponse>(adminApi.account+'/'+account.id, account)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -47,7 +49,6 @@ export default class AccountResponse {
     }else{
       ajax.post<BaseResponse>(adminApi.account, account)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -55,6 +56,26 @@ export default class AccountResponse {
         })
     }
     
+  }
+
+  public deleteData(id: number, success: (data: BaseResponse) => void, error: (err: any) => void): void {
+    ajax.delete<BaseResponse>(adminApi.account + '/' + id)
+        .then(res => {
+            if (success) success(res.data)
+        })
+        .catch(err => {
+          if (error) error(err)
+        })
+  }
+
+  public getCounselorsList(success: (data: Account[]) => void, error: (err: any) => void): void {
+    ajax.get<Account[]>(accountApi.BaseUrl + '/counselors')
+        .then(res => {
+            if (success) success(res.data)
+        })
+        .catch(err => {
+          if (error) error(err)
+        })
   }
 
 

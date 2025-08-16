@@ -35,17 +35,11 @@ const submitTeacher = () => {
         model.update(teacherInfo.value,
         (data) => { 
             hideDialog()
-        },
-        (err) => {
-            console.log(err)
         })
     }else{
         model.create(teacherInfo.value,
         (data) => { 
             hideDialog()
-        },
-        (err) => {
-            console.log(err)
         })
     }
     

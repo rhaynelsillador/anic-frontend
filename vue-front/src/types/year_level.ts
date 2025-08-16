@@ -21,7 +21,6 @@ export default class YearLevelResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<YearLevelResponse>(yearLeveApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })

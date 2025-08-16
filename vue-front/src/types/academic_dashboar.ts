@@ -21,10 +21,19 @@ export default class DashboardReportResponse {
 
   public getData(filter : Filter, success: (data: DashboardReportResponse) => void, error: (err: any) => void): void {
     let query = new FilterParser().toUriParams(filter);
-    console.log("queryquery :: >> " , query)
     ajax.get<DashboardReportResponse>(dashboardApi.academicReport+query)
         .then(res => {
-            console.log(res.data)
+            if (success) success(res.data)
+        })
+        .catch(err => {
+          if (error) error(err)
+        })
+  }
+
+
+  public getMainDashboardData(success: (data: DashboardReportResponse) => void, error: (err: any) => void): void {
+    ajax.get<DashboardReportResponse>(dashboardApi.report)
+        .then(res => {
             if (success) success(res.data)
         })
         .catch(err => {

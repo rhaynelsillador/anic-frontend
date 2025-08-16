@@ -8,7 +8,6 @@ export default class Helper {
         const dd = String(today.getDate()).padStart(2, '0');
 
         const formattedDate = `${yyyy}-${mm}-${dd}`;
-        console.log(formattedDate); // e.g., "2025-07-10"
 
         return formattedDate;
     }

@@ -170,7 +170,6 @@ const filters = ref({
 });
 
 const fTmp = JSON.parse(JSON.stringify(filters.value));
-const loadLazyTimeout = ref(null);
 const totalRecords = ref(0);
 const dialog = ref(false);
 const deleteDialog = ref(false);
@@ -179,11 +178,6 @@ const submitted = ref(false);
 const initialized = ref(false);
 const initializedForm = ref({});
 const initializedSubmitted = ref(false);
-
-const statusOptions = ref([
-    { label: 'Active', value: true },
-    { label: 'Inactive', value: false },
-]);
 
 onMounted(() => {
     loadData({ filters: filters.value });
@@ -197,7 +191,6 @@ const loadData = (filter) => {
             totalRecords.value = data.page.totalCount;
         },
         (err) => {
-            console.log(err);
             toast.add({ 
                 severity: 'error', 
                 summary: 'Error', 
@@ -272,7 +265,7 @@ function deleteSchoolYear() {
 const submit = () => {
     submitted.value = true;
     
-    if (!schoolYear.value.year || !schoolYear.value.opening || !schoolYear.value.closing || schoolYear.value.current === undefined) {
+    if (!schoolYear.value.year || !schoolYear.value.opening || !schoolYear.value.closing) {
         return;
     }
     
@@ -286,8 +279,6 @@ const submit = () => {
             schoolYear.value.closing.toISOString().split('T')[0] : 
             schoolYear.value.closing
     };
-    
-    console.log('Submitting school year:', payload);
 
     let model = new SchoolYearResponse();
     model.sendData(payload,
@@ -388,6 +379,7 @@ const initializedSchoolYear = () => {
                     group: 'tl', 
                     life: 3000 
                 });
+                globalStore.fetchSchoolYears();
                 cancelInitialize(); // Close the dialog and reset form on success
             } else {
                 toast.add({ 
@@ -397,14 +389,15 @@ const initializedSchoolYear = () => {
                     group: 'tl', 
                     life: 3000 
                 });
+                
             }
             loadData({ filters: filters.value });
             // Refresh global school years data
             globalStore.schoolYearsLoaded = false;
             globalStore.fetchSchoolYears();
+            globalStore.fetchGlobalConfig();
         },
         (err) => {
-            console.log(err);
             toast.add({ 
                 severity: 'error', 
                 summary: 'Error', 

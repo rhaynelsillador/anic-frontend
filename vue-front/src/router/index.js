@@ -97,6 +97,109 @@ const router = createRouter({
                     name: 'settings-users',
                     component: () => import('@/views/pages/setting/AccountListView.vue')
                 },
+
+                // Guidance Module Routes
+                {
+                    path: '/guidance',
+                    name: 'guidance-dashboard',
+                    component: () => import('@/views/pages/guidance/GuidanceDashboard.vue')
+                },
+                {
+                    path: '/guidance/cases',
+                    name: 'guidance-cases',
+                    component: () => import('@/views/pages/guidance/GuidanceCasesView.vue')
+                },
+                {
+                    path: '/guidance/cases/create',
+                    name: 'guidance-cases-create',
+                    component: () => import('@/views/pages/guidance/forms/CaseForm.vue')
+                },
+                {
+                    path: '/guidance/cases/:id/edit',
+                    name: 'guidance-cases-edit',
+                    component: () => import('@/views/pages/guidance/forms/CaseForm.vue')
+                },
+                {
+                    path: '/guidance/cases/:id',
+                    name: 'guidance-case-details',
+                    component: () => import('@/views/pages/guidance/CaseDetailsView.vue')
+                },
+                {
+                    path: '/guidance/cases/:id/add-session',
+                    name: 'guidance-cases-add-session',
+                    component: () => import('@/views/pages/guidance/forms/SessionForm.vue')
+                },
+                {
+                    path: '/guidance/sessions',
+                    name: 'guidance-sessions',
+                    component: () => import('@/views/pages/guidance/GuidanceSessionsView.vue')
+                },
+                {
+                    path: '/guidance/cases/:id/sessions/:sessionId/edit',
+                    name: 'guidance-cases-sessions-edit',
+                    component: () => import('@/views/pages/guidance/forms/SessionForm.vue')
+                },
+                {
+                    path: '/guidance/sessions/:id',
+                    name: 'guidance-sessions-view',
+                    component: () => import('@/views/pages/guidance/CaseSessionDetailsView.vue')
+                },
+                {
+                    path: '/guidance/sessions/:id/complete',
+                    name: 'guidance-sessions-complete',
+                    component: () => import('@/views/pages/guidance/forms/CompleteSessionForm.vue')
+                },
+                {
+                    path: '/guidance/sessions/schedule',
+                    name: 'guidance-sessions-schedule',
+                    component: () => import('@/views/pages/guidance/forms/SessionForm.vue')
+                },
+                {
+                    path: '/guidance/sessions/emergency',
+                    name: 'guidance-sessions-emergency',
+                    component: () => import('@/views/pages/guidance/forms/EmergencySessionForm.vue')
+                },
+                {
+                    path: '/guidance/incidents',
+                    name: 'guidance-incidents',
+                    component: () => import('@/views/pages/guidance/IncidentReportsView.vue')
+                },
+                {
+                    path: '/guidance/incidents/create',
+                    name: 'guidance-incidents-create',
+                    component: () => import('@/views/pages/guidance/forms/IncidentForm.vue')
+                },
+                {
+                    path: '/guidance/parent-contacts',
+                    name: 'guidance-parent-contacts',
+                    component: () => import('@/views/pages/guidance/ParentContactsView.vue')
+                },
+                {
+                    path: '/guidance/parent-contacts/create',
+                    name: 'guidance-parent-contacts-create',
+                    component: () => import('@/views/pages/guidance/forms/ParentContactForm.vue')
+                },
+                {
+                    path: '/guidance/interventions',
+                    name: 'guidance-interventions',
+                    component: () => import('@/views/pages/guidance/InterventionPlansView.vue')
+                },
+                {
+                    path: '/guidance/interventions/create',
+                    name: 'guidance-interventions-create',
+                    component: () => import('@/views/pages/guidance/forms/InterventionForm.vue')
+                },
+                {
+                    path: '/guidance/reports',
+                    name: 'guidance-reports',
+                    component: () => import('@/views/pages/guidance/ReportsView.vue')
+                },
+                {
+                    path: '/guidance/settings',
+                    name: 'guidance-settings',
+                    component: () => import('@/views/pages/guidance/SettingsView.vue')
+                },
+
                 {
                     path: '/settings/roles',
                     name: 'settings-roles',
@@ -218,6 +321,11 @@ const router = createRouter({
             name: 'login',
             component: () => import('@/views/pages/auth/Login.vue')
         },
+        {
+            path: '/setup',
+            name: 'setup',
+            component: () => import('@/views/pages/SetupPage.vue')
+        },
         // {
         //     path: '/auth/access',
         //     name: 'accessDenied',
@@ -232,11 +340,10 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const publicPages = ['/auth/login']
+  const publicPages = ['/auth/login', '/setup']
   const authRequired = !publicPages.some(p => to.path.startsWith(p))
 
   const userStore = useGlobalStore()
-  console.log("Checking route:", to.path, "isLogin:", userStore.isLogin)
 
   if (authRequired && !userStore.isLogin) {
     return next('/auth/login')

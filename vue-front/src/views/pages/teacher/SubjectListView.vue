@@ -2,6 +2,10 @@
 import AttendanceRecordResponse from '@/types/attendance_record';
 import SubjectCodeResponse from '@/types/subject_code';
 import { onMounted, ref } from 'vue';
+import Dialog from 'primevue/dialog';
+import Textarea from 'primevue/textarea';
+import FileUpload from 'primevue/fileupload';
+import Tooltip from 'primevue/tooltip';
 
 const students = ref(null)
 const totalRecords = ref(0)
@@ -140,12 +144,45 @@ const fetchAttendanceData = (code, startDate, endDate) => {
     );
 }
 
-const createAttendance = (studentId, date, status) => {
+const showExcuseModal = ref(false);
+const excuseReason = ref('');
+const excuseFiles = ref([]);
+const selectedStudentId = ref(null);
+const selectedDate = ref(null);
+
+function handleExcusedClick(studentId, date) {
+    selectedStudentId.value = studentId;
+    selectedDate.value = date;
+    excuseReason.value = '';
+    excuseFiles.value = [];
+    showExcuseModal.value = true;
+}
+
+function submitExcuse() {
+    // Implement file upload logic as needed
+    createAttendance(selectedStudentId.value, selectedDate.value, 'EXCUSED', excuseReason.value, excuseFiles.value);
+    showExcuseModal.value = false;
+}
+
+function handleFileUpload(event) {
+    excuseFiles.value = event.files;
+}
+
+// Update createAttendance to accept reason and files
+const createAttendance = (studentId, date, status, reason = null, files = []) => {
     // Placeholder for creating attendance record
     console.log(`Creating attendance for student ID: ${studentId} on date: ${date}`);
     // Implement the logic to create attendance record
     let model = new AttendanceRecordResponse();
-    model.createAttendance({studentId: studentId, date: date, subjectCode: subjectCode.value.code, status: status},
+    let payload = {
+        studentId: studentId,
+        date: date,
+        subjectCode: subjectCode.value.code,
+        status: status,
+        remarks: reason
+        // You can add file upload logic here if needed
+    };
+    model.createAttendance(payload,
         (data) => {
             // Process the data as needed
             if(data.status === 'SUCCESS') {
@@ -172,37 +209,134 @@ const createAttendance = (studentId, date, status) => {
 </script>
 
 <template>
-    <div class="flex flex-col">
-        <div class="flex justify-between">
-            <Button icon="pi pi-angle-left" severity="secondary" rounded label="Previous" @click="nextPage(-1)"/>
-            {{ subjectCode.yearLevel }} - ({{ subjectCode.label }})
-            <Button icon="pi pi-angle-right" severity="secondary" rounded label="Next"  @click="nextPage(1)"/>
+    <div class="min-h-screen bg-gray-50 p-6">
+        <!-- Header Section -->
+        <div class="bg-white rounded-lg shadow-sm border p-6 mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Subject Attendance</h1>
+                <p class="text-gray-600">Track and manage attendance for each student by week.</p>
+            </div>
+            <div class="flex gap-2">
+                 </div>
         </div>
-        <br>
-        <DataTable :value="students" tableStyle="min-width: 50rem">
-            <Column field="student.fullName" header="Student Name"></Column>
-            <Column v-for="(val, index) in weekDates" :field="val" :header="val">
-                <template #body="slotProps">
-                    <div class="flex flex-col items-center">
-                        <span v-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field)">
-                            <Tag v-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'PRESENT'" value="Present" severity="primary" ></Tag>
-                            <Tag v-else-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'ABSENT'" severity="danger" value="Absent"></Tag>
-                            <Tag v-else-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'LATE'" severity="warn" value="Late"></Tag>
-                            <Tag v-else-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'EXCUSED'" severity="info" value="Excused"></Tag>
-                        </span>
-                       
 
-                    <SplitButton v-else label="Present" :model="items" severity="secondary" @click="createAttendance(slotProps.data.student.id, slotProps.field, 'PRESENT')">
-                        <template #item="{ item, toggleCallback }">
-                            <span @click="createAttendance(slotProps.data.student.id, slotProps.field, item.value)" class="flex items-center gap-2 cursor-pointer">
-                                {{ item.label }}
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+            <div class="flex justify-between items-center">
+            <Button icon="pi pi-angle-left" severity="secondary" rounded label="Previous" @click="nextPage(-1)"/>
+                <span class="font-semibold text-blue-800">{{ subjectCode.yearLevel }} - ({{ subjectCode.label }})</span>
+                <Button icon="pi pi-angle-right" severity="secondary" rounded label="Next"  @click="nextPage(1)"/>
+           </div>
+            <DataTable :value="students" tableStyle="min-width: 50rem">
+                <Column field="student.fullName" header="Student Name"></Column>
+                <Column v-for="(val, index) in weekDates" :field="val" :header="val" :key="val">
+                    <template #body="slotProps">
+                        <div class="flex flex-col items-center">
+                            <span v-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field)">
+                                <Tag
+                                    v-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'PRESENT'"
+                                    value="Present" severity="primary" ></Tag>
+                                <Tag
+                                    v-else-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'ABSENT'"
+                                    severity="danger" value="Absent"></Tag>
+                                <Tag
+                                    v-else-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'LATE'"
+                                    severity="warn" value="Late"></Tag>
+                                <Tag
+                                    v-else-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).status == 'EXCUSED'"
+                                    severity="info"
+                                    value="Excused"
+                                    v-tooltip="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).remarks || 'No remarks'"
+                                >
+                                    <template #icon>
+                                        <i v-if="attendanceRecords.find(d => d.studentId == slotProps.data.student.id && d.date == slotProps.field).remarks"
+                                           class="pi pi-comment text-blue-700 ml-1" title="Has remarks"></i>
+                                    </template>
+                                </Tag>
                             </span>
-                        </template>
+                            <div v-else class="w-full flex justify-center">
+                                <SplitButton
+                                    label="Mark Present"
+                                    :model="items"
+                                    severity="success"
+                                    class="attendance-split-btn"
+                                    @click="createAttendance(slotProps.data.student.id, slotProps.field, 'PRESENT')"
+                                >
+                                    <template #item="{ item }">
+                                        <span
+                                            v-if="item.value === 'EXCUSED'"
+                                            @click="handleExcusedClick(slotProps.data.student.id, slotProps.field)"
+                                            class="flex items-center gap-2 cursor-pointer px-2 py-1 hover:bg-blue-50 rounded"
+                                        >
+                                            <i :class="item.icon" class="mr-1"></i>{{ item.label }}
+                                        </span>
+                                        <span
+                                            v-else
+                                            @click="createAttendance(slotProps.data.student.id, slotProps.field, item.value)"
+                                            class="flex items-center gap-2 cursor-pointer px-2 py-1 hover:bg-blue-50 rounded"
+                                        >
+                                            <i :class="item.icon" class="mr-1"></i>{{ item.label }}
+                                        </span>
+                                    </template>
+                                </SplitButton>
+                            </div>
+                        </div>
+                    </template>
+                </Column>
+            </DataTable>
+        </div>
 
-                    </SplitButton>
-                    </div>
-                </template>
-            </Column>
-        </DataTable>
+        <!-- Excuse Modal -->
+        <Dialog v-model:visible="showExcuseModal" :style="{ width: '500px' }" header="Excuse Reason" :modal="true">
+            <div class="flex flex-col gap-4">
+                <div>
+                    <label for="excuseReason" class="block font-bold mb-2">Reason for Excuse *</label>
+                    <Textarea id="excuseReason" v-model="excuseReason" rows="3" placeholder="Enter reason..." autoResize />
+                </div>
+                <div>
+                    <label class="block font-bold mb-2">Upload Supporting Files</label>
+                    <FileUpload name="excuseFiles" customUpload :auto="false" @select="handleFileUpload" :multiple="true" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="Cancel" icon="pi pi-times" @click="showExcuseModal = false" severity="secondary" />
+                <Button label="Submit Excuse" icon="pi pi-check" @click="submitExcuse" severity="info" />
+            </template>
+        </Dialog>
     </div>
 </template>
+
+<style scoped>
+/* Add some spacing and card styling */
+.bg-gray-50 {
+    background-color: #f9fafb;
+}
+.card {
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid #e5e7eb;
+}
+.attendance-split-btn {
+    min-width: 110px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid #e5e7eb;
+}
+.attendance-split-btn :deep(.p-splitbutton-menubutton) {
+    border-radius: 0.5rem;
+    background: #f3f4f6;
+    border: none;
+}
+.attendance-split-btn :deep(.p-splitbutton-menu) {
+    min-width: 120px;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.attendance-split-btn :deep(.p-menuitem-link) {
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+}
+</style>
+

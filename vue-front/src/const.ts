@@ -26,6 +26,8 @@ export const ApiRoom = api + "/v1/room"
 export const ApiAttendance = api + "/v1/attendance"
 export const ApiGrade = api + "/v1/grade"
 export const ApiSchoolYear = api + "/v1/schoolyear"
+export const ApiTranscript = api + "/v1/transcript"
+export const ApiSetup = api + "/v1/setup"
 
 
 export const ApiConfig = api + "/v1/config"
@@ -82,6 +84,18 @@ export const schoolYearApi = {
   BaseUrl : ApiSchoolYear
 }
 
+export const transcriptApi = {
+  BaseUrl : ApiTranscript
+}
+
+export const setupApi = {
+  BaseUrl : ApiSetup
+}
+
+export const accountApi = {
+  BaseUrl : api + "/v1/account"
+}
+
 export const adminApi = {
   config : ApiConfig,
   account : ApiAccount,
@@ -91,6 +105,7 @@ export const adminApi = {
 
 export const dashboardApi = {
   academicReport : api+"/v1/report/academic",
+  report : api+"/v1/report",
 }
 
 

@@ -24,7 +24,19 @@ const menuModeOptions = ref([
 ]);
 
 onMounted(() => {
-    console.log(useGlobalStore(), "layoutConfig : ", layoutConfig)
+    // Apply saved theme configuration on mount
+    const primaryColor = primaryColors.value.find((c) => c.name === layoutConfig.primary);
+    const surfaceColor = surfaces.value.find((s) => s.name === layoutConfig.surface);
+    
+    if (primaryColor) {
+        applyTheme('primary', primaryColor);
+    }
+    if (surfaceColor) {
+        applyTheme('surface', surfaceColor);
+    }
+    
+    // Apply preset
+    onPresetChange();
 })
 
 const primaryColors = ref([

@@ -7,9 +7,6 @@ import com.sillador.strecs.brokerservice.dto.ResponseCode;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,10 +38,11 @@ public class LoginRestController {
             );
 
             System.out.println("auth.getPrincipal() : " + authentication.getPrincipal());
+            System.out.println("auth.getCredentials() : " + authentication.getCredentials());
             System.out.println("auth.getAuthorities() : " + authentication.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = jwtUtil.generateToken(loginInfo.getIdentifier(), authentication.getAuthorities());
+            String jwt = jwtUtil.generateToken(authentication.getPrincipal().toString(), authentication.getAuthorities());
 
             
             // request.getSession(true); // Start session if needed
@@ -59,7 +55,8 @@ public class LoginRestController {
     @GetMapping("/loginStatus")
     public Object loginStatus(HttpServletRequest request){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
+        System.out.println("auth : " + auth);
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal() == null || auth.getPrincipal().equals("anonymousUser")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(true);

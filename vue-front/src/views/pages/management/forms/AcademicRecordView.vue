@@ -23,8 +23,11 @@ onMounted(() => {
                     <th>Adviser</th>
                     <th>Room</th>
                     <th v-if="ar.subjects.find(d => d.groupYearLevel == 'COLLEGE')">Units</th>
-                    <th>Grades</th>
-                    <th>Status</th>
+                    <th>Q1</th>
+                    <th>Q2</th>
+                    <th>Q3</th>
+                    <th>Q4</th>
+                    <th>Final</th>
                     <th>Remarks</th>
                 </thead>
                 <tbody>
@@ -34,10 +37,12 @@ onMounted(() => {
                         <td>{{ subject.adviser }}</td>
                         <td>{{ subject.roomNum ?? "N/A" }}</td>
                         <td v-if="ar.subjects.find(d => d.groupYearLevel == 'COLLEGE')">{{ subject.units == 0 ? '' : subject.units }}</td>
-                        <td>{{ subject.grades }}</td>
-                        <td>{{ subject.status }}</td>
+                        <td>{{ subject.firstQuarter }}</td>
+                        <td>{{ subject.secondQuarter }}</td>
+                        <td>{{ subject.thirdQuarter }}</td>
+                        <td>{{ subject.fourthQuarter }}</td>
+                        <td>{{ subject.finalGrade }}</td>
                         <td>{{ subject.remarks }}</td>
-                        <td></td>
                     </tr>
                 </tbody>
             </table>

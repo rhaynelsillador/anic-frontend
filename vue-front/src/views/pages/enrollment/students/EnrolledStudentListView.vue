@@ -13,10 +13,20 @@
         <Column field="student.studentId" header="Avatar" style="min-width: 5rem"
             :showFilterMenu="false" :sortable="false">
             <template #body="{ data }">
-                <Avatar @click="() => { router.push('/enrollment/student/' + data.student.id) }"
-                        :label="data.student.firstName ? data.student.firstName.substring(0, 1).toUpperCase() : ''" class="mr-2"
-                        :style="{ 'cursor': 'pointer', 'background-color': primaryColors[Math.floor(Math.random() * primaryColors.length)].palette['900'], color: '#ffffff' }"
-                        shape="circle"></Avatar>
+                <div v-if="getStudentAvatarUrl(data)" class="flex justify-center">
+                    <Avatar @click="() => { router.push('/enrollment/student/' + data.student.id) }"
+                            :image="getStudentAvatarUrl(data)"
+                            class="mr-2 transition-all duration-200 hover:scale-105 border-2 border-gray-200 hover:border-blue-300 cursor-pointer"
+                            style="width: 40px; height: 40px;"
+                            shape="circle"></Avatar>
+                </div>
+                <div v-else class="flex justify-center">
+                    <Avatar @click="() => { router.push('/enrollment/student/' + data.student.id) }"
+                            :label="data.student.firstName ? data.student.firstName.substring(0, 1).toUpperCase() : ''"
+                            class="mr-2 transition-all duration-200 hover:scale-105 border-2 border-gray-200 hover:border-blue-300 cursor-pointer"
+                            :style="{ 'width': '40px', 'height': '40px', 'background-color': primaryColors[data.student.id % primaryColors.length].palette['900'], color: '#ffffff' }"
+                            shape="circle"></Avatar>
+                </div>
             </template>
         </Column>
         <Column field="student.studentId" filterField="student.studentId" header="Student ID" style="min-width: 12rem"
@@ -210,6 +220,7 @@ import EnrollmentResponse from '@/types/enrollment';
 import router from '@/router';
 import GenderComponent from '@/components/GenderComponent.vue';
 import IDPreview from '@/components/IDPreview.vue';
+import { getProfilePictureUrl } from '@/config/app';
 
 const toast = useToast();
 const globalStore = useGlobalStore();
@@ -219,6 +230,13 @@ const totalRecords = ref(0)
 const showPreview = ref(false)
 const currentStudent = ref(null)
 const statuses = ['MALE', 'FEMALE'];
+
+// Helper function to get profile picture URL for enrolled students
+const getStudentAvatarUrl = (studentData) => {
+    const student = studentData.student;
+    const photoUrl = student.profilePictureUrl || student.photoUrl;
+    return getProfilePictureUrl(photoUrl);
+};
 
 // Use computed to get school years from global store
 const schoolYears = computed(() => globalStore.schoolYears);
@@ -278,9 +296,6 @@ const loadStudents = (filter) => {
         (data) => {
             students.value = data.data;
             totalRecords.value = data.page.totalCount;
-        },
-        (err) => {
-            console.log(err)
         })
 }
 

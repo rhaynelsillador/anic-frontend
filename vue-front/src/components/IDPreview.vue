@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
 import html2canvas from 'html2canvas'
+import { getProfilePictureUrl } from '@/config/app'
 
 interface Props {
   students: any[] // Changed from Student[] to any[] to handle both enrollment and student objects
@@ -91,10 +92,9 @@ const generateIDImage = async () => {
 // Get student photo or generate initials
 const getStudentPhoto = (studentData: any) => {
   const student = studentData.student || studentData
-  if (student.photoUrl) {
-    return student.photoUrl
-  }
-  return null
+  // Check for both profilePictureUrl and photoUrl fields
+  const photoUrl = student.profilePictureUrl || student.photoUrl
+  return getProfilePictureUrl(photoUrl)
 }
 
 // Get student initials for avatar

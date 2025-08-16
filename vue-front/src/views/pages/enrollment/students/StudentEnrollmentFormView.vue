@@ -16,6 +16,8 @@ const canApplyAllLevel = ref(false)
 const canApplyAllSection = ref(false)
 const students = ref([])
 const isOpen = ref(true)
+const errors = ref({});
+const isLoading = ref(false)
 
 const emit = defineEmits(['onClose']);
 
@@ -60,14 +62,10 @@ const loadData = () => {
 
 
 
-        },
-        (err) => {
-            console.log(err)
         })
 }
 
 const loadSectionData = (index, yearLevel) => {
-    console.log('yearLevel', yearLevel)
     if (yearLevel && sections.value[yearLevel.code] == undefined) {
 
         let filterRequest: Filter = {
@@ -92,9 +90,6 @@ const loadSectionData = (index, yearLevel) => {
                     code: String(cls.id) // convert number to string, if needed
                 }));
 
-            },
-            (err) => {
-                console.log(err)
             })
     }
 
@@ -107,13 +102,31 @@ function hideDialog() {
     emit('onClose');
 }
 
+const validateForm = () => {
+    errors.value = {};
+    
+    students.value.forEach((student, index) => {
+        if (!student.yearLevelData) {
+            errors.value[`yearLevel_${index}`] = 'Grade level is required';
+        }
+        if (!student.sectionData) {
+            errors.value[`section_${index}`] = 'Section is required';
+        }
+    });
+    
+    return Object.keys(errors.value).length === 0;
+};
+
 function save() {
-    // console.log(",,,, ", students.value)
+    if (!validateForm()) {
+        toast.add({ severity: 'warn', summary: 'Validation Error', detail: 'Please assign all students to a grade level and section', group: 'tl', life: 3000 });
+        return;
+    }
+    
+    isLoading.value = true;
 
     let hasAllValidLevel = students.value.find(d => d.yearLevelData == undefined) == undefined
     let hasAllValidSection = students.value.find(d => d.sectionData == undefined) == undefined
-
-    console.log("hasAllValidLevel : ", hasAllValidLevel, hasAllValidSection, students.value)
     if (!hasAllValidLevel) {
         toast.add({ severity: 'error', summary: 'Error', detail: "Grade Level assignment is required to all students.", group: 'tl', life: 3000 });
     } else if (!hasAllValidSection) {
@@ -125,14 +138,10 @@ function save() {
             yearLevel: Number(student.yearLevelData.code)
         }));
 
-
-        console.log(sectionAssignment)
-
         // Subject new subject
         let model = new StudentSectionAssignmentRequest();
 
         model.post(sectionAssignment, (data) => {
-            console.log("response ", data)
             if (data.status == "SUCCESS") {
                 toast.add({ severity: 'success', summary: 'Success', detail: data.message, group: 'tl', life: 3000 });
                 hideDialog()
@@ -140,10 +149,10 @@ function save() {
                 toast.add({ severity: 'error', summary: 'Error', detail: data.message, group: 'tl', life: 3000 });
             }
         }, (err) => {
-            console.log("error ", err)
             toast.add({ severity: 'error', summary: 'Error', detail: err.message, group: 'tl', life: 3000 });
         })
     }
+    isLoading.value = false;
 }
 
 const getSections = (yearLevelData) => {
@@ -184,14 +193,11 @@ const hasSameSection = () => {
         // Only compare when yearLevelData is present
         return item.sectionData == null || JSON.stringify(item.sectionData) === referenceValue;
     });
-
-    console.log("canApplyAllSection.valuecanApplyAllSection.value ", canApplyAllSection.value)
 }
 
 const applyLevelToAll = (isApply) => {
     // Find first valid yearLevelData
     const reference = students.value.find(item => item.yearLevelData != null)?.yearLevelData;
-    console.log(reference)
     if (!reference) {
         console.warn('No valid yearLevelData found.');
         hasSameYearLevel()
@@ -229,54 +235,277 @@ const applySectionToAll = (isApply) => {
 </script>
 
 <template>
-    <Dialog v-model:visible="isOpen" :style="{ width: '80%' }" header="Student Enrollment" :modal="true"
-        @hide="hideDialog">
-        <hr>
-        <div class="card flex flex-col gap-4">
-            <div class="font-semibold text-xl">Actions</div>
-            <div class="flex flex-wrap gap-2">
-                <Button label="Enroll" :disabled="!canApplyAllLevel" @click="applyLevelToAll(true)">Enroll Everyone in
-                    this Level</Button>
-                <Button label="Reset Levels" severity="danger" :disabled="!canApplyAllLevel"
-                    @click="applyLevelToAll(false)"></Button>
-
-                <span>|</span>
-                <Button label="Apply Section To All" :disabled="!canApplyAllSection || !canApplyAllLevel"
-                    @click="applySectionToAll(true)"></Button>
-                <Button label="Reset Section" severity="danger" :disabled="!canApplyAllSection || !canApplyAllLevel"
-                    @click="applySectionToAll(false)"></Button>
-            </div>
-
-        </div>
-        <hr>
-        <Fluid>
-            <div class="card flex flex-col gap-4 w-full">
-                <div class="font-semibold text-xl">Student Enrollment</div>
-                <div class="flex flex-col md:flex-row gap-4" v-for="(student, ind) in students">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="name1" v-if="ind == 0">Student Name</label>
-                        <label class="w-full" for="">{{ ind + 1 }}). {{ student.student.firstName }} {{
-                            student.student.lastName }} </label>
+    <Dialog v-model:visible="isOpen" :style="{ width: '95%', maxWidth: '1400px' }" 
+            header="Student Enrollment Assignment" :modal="true" @hide="hideDialog" 
+            :closable="!isLoading" class="student-enrollment-dialog">
+            
+        <div class="min-h-[700px] p-2">
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-6 border border-blue-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="pi pi-users text-2xl text-blue-600"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">Student Enrollment</h2>
+                </div>
+                <p class="text-gray-600">Assign students to their appropriate grade level and section for the current school year.</p>
+                <div class="mt-3 flex items-center gap-4 text-sm">
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-users text-blue-500"></i>
+                        <span class="font-medium">{{ students.length }} Students Selected</span>
                     </div>
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="name1" v-if="ind == 0">Grade Level</label>
-                        <Select id="state" v-model="student.yearLevelData" :options="yearLevels" optionLabel="name"
-                            placeholder="Select One" class="w-full"
-                            @change="loadSectionData(ind, student.yearLevelData)"></Select>
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="name1" v-if="ind == 0">Section</label>
-                        <Select id="state" v-model="student.sectionData" :options="getSections(student.yearLevelData)"
-                            optionLabel="name" placeholder="Select One" class="w-full"
-                            @change="hasSameSection"></Select>
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-calendar text-green-500"></i>
+                        <span class="font-medium">School Year: {{ useGlobalStore().appConfig.schoolYear }}</span>
                     </div>
                 </div>
             </div>
-        </Fluid>
+
+            <!-- Bulk Actions Section -->
+            <Card class="mb-6">
+                <template #title>
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-bolt text-orange-500"></i>
+                        Bulk Actions
+                    </div>
+                </template>
+                <template #content>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Grade Level Actions -->
+                        <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                            <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                                <i class="pi pi-graduation-cap"></i>
+                                Grade Level Actions
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <Button 
+                                    label="Apply Level to All" 
+                                    icon="pi pi-copy"
+                                    severity="info"
+                                    size="small"
+                                    :disabled="!canApplyAllLevel" 
+                                    @click="applyLevelToAll(true)"
+                                />
+                                <Button 
+                                    label="Reset All Levels" 
+                                    icon="pi pi-refresh"
+                                    severity="danger" 
+                                    outlined
+                                    size="small"
+                                    :disabled="!canApplyAllLevel"
+                                    @click="applyLevelToAll(false)"
+                                />
+                            </div>
+                            <p class="text-xs text-blue-600 mt-2">
+                                Apply the same grade level to all students or reset all assignments
+                            </p>
+                        </div>
+
+                        <!-- Section Actions -->
+                        <div class="p-4 border border-green-200 rounded-lg bg-green-50">
+                            <h4 class="font-semibold text-green-800 mb-3 flex items-center gap-2">
+                                <i class="pi pi-sitemap"></i>
+                                Section Actions
+                            </h4>
+                            <div class="flex flex-wrap gap-2">
+                                <Button 
+                                    label="Apply Section to All" 
+                                    icon="pi pi-copy"
+                                    severity="success"
+                                    size="small"
+                                    :disabled="!canApplyAllSection || !canApplyAllLevel" 
+                                    @click="applySectionToAll(true)"
+                                />
+                                <Button 
+                                    label="Reset All Sections" 
+                                    icon="pi pi-refresh"
+                                    severity="danger" 
+                                    outlined
+                                    size="small"
+                                    :disabled="!canApplyAllSection || !canApplyAllLevel"
+                                    @click="applySectionToAll(false)"
+                                />
+                            </div>
+                            <p class="text-xs text-green-600 mt-2">
+                                Apply the same section to all students or reset all assignments
+                            </p>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+
+            <!-- Student Assignment Section -->
+            <Card>
+                <template #title>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="pi pi-list text-indigo-500"></i>
+                            Student Assignments
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <Tag :value="`${students.filter(s => s.yearLevelData && s.sectionData).length}/${students.length} Complete`" 
+                                 :severity="students.every(s => s.yearLevelData && s.sectionData) ? 'success' : 'warning'" />
+                        </div>
+                    </div>
+                </template>
+                <template #content>
+                    <div class="space-y-4">
+                        <div v-for="(student, index) in students" :key="index" 
+                             class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            
+                            <!-- Student Header -->
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-bold text-indigo-600">{{ index + 1 }}</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">
+                                            {{ student.student.firstName }} {{ student.student.lastName }}
+                                        </h4>
+                                        <p class="text-sm text-gray-500">Student ID: {{ student.student.studentNumber || 'N/A' }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <Tag v-if="student.yearLevelData && student.sectionData" 
+                                         value="Complete" severity="success" />
+                                    <Tag v-else-if="student.yearLevelData" 
+                                         value="Partial" severity="warning" />
+                                    <Tag v-else 
+                                         value="Pending" severity="danger" />
+                                </div>
+                            </div>
+
+                            <!-- Assignment Form -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Grade Level Selection -->
+                                <div class="field">
+                                    <label :for="`yearLevel_${index}`" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="pi pi-graduation-cap text-blue-500 mr-1"></i>
+                                        Grade Level <span class="text-red-500">*</span>
+                                    </label>
+                                    <Select 
+                                        :id="`yearLevel_${index}`"
+                                        v-model="student.yearLevelData" 
+                                        :options="yearLevels" 
+                                        optionLabel="name"
+                                        placeholder="Select Grade Level" 
+                                        class="w-full"
+                                        :class="{ 'p-invalid': errors[`yearLevel_${index}`] }"
+                                        @change="loadSectionData(index, student.yearLevelData)"
+                                    />
+                                    <small v-if="errors[`yearLevel_${index}`]" class="p-error">{{ errors[`yearLevel_${index}`] }}</small>
+                                </div>
+
+                                <!-- Section Selection -->
+                                <div class="field">
+                                    <label :for="`section_${index}`" class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="pi pi-sitemap text-green-500 mr-1"></i>
+                                        Section <span class="text-red-500">*</span>
+                                    </label>
+                                    <Select 
+                                        :id="`section_${index}`"
+                                        v-model="student.sectionData" 
+                                        :options="getSections(student.yearLevelData)"
+                                        optionLabel="name" 
+                                        placeholder="Select Section" 
+                                        class="w-full"
+                                        :class="{ 'p-invalid': errors[`section_${index}`] }"
+                                        :disabled="!student.yearLevelData"
+                                        @change="hasSameSection"
+                                    />
+                                    <small v-if="errors[`section_${index}`]" class="p-error">{{ errors[`section_${index}`] }}</small>
+                                    <small v-if="!student.yearLevelData" class="text-gray-500 text-xs">Select grade level first</small>
+                                </div>
+                            </div>
+
+                            <!-- Assignment Summary -->
+                            <div v-if="student.yearLevelData || student.sectionData" 
+                                 class="mt-3 p-3 bg-gray-50 rounded-lg border-l-4"
+                                 :class="student.yearLevelData && student.sectionData ? 'border-green-400 bg-green-50' : 'border-yellow-400 bg-yellow-50'">
+                                <div class="text-sm">
+                                    <span class="font-medium">Assignment:</span>
+                                    <span v-if="student.yearLevelData" class="ml-2">{{ student.yearLevelData.name }}</span>
+                                    <span v-if="student.yearLevelData && student.sectionData"> - </span>
+                                    <span v-if="student.sectionData">{{ student.sectionData.name }}</span>
+                                    <span v-if="!student.yearLevelData || !student.sectionData" class="text-orange-600 ml-2">
+                                        (Incomplete)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Summary -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-3">Assignment Progress</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <div class="text-2xl font-bold text-green-800">
+                                    {{ students.filter(s => s.yearLevelData && s.sectionData).length }}
+                                </div>
+                                <div class="text-sm text-green-600">Complete</div>
+                            </div>
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <div class="text-2xl font-bold text-yellow-800">
+                                    {{ students.filter(s => s.yearLevelData && !s.sectionData).length }}
+                                </div>
+                                <div class="text-sm text-yellow-600">Partial</div>
+                            </div>
+                            <div class="p-3 bg-red-100 rounded-lg">
+                                <div class="text-2xl font-bold text-red-800">
+                                    {{ students.filter(s => !s.yearLevelData).length }}
+                                </div>
+                                <div class="text-sm text-red-600">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </Card>
+        </div>
+
         <template #footer>
-            <Button label="Cancel" icon="pi pi-times" text @click="hideDialog" />
-            <Button label="Save" icon="pi pi-check" @click="save" />
+            <div class="flex justify-between items-center w-full">
+                <div class="text-sm text-gray-500">
+                    <i class="pi pi-info-circle mr-1"></i>
+                    {{ students.filter(s => s.yearLevelData && s.sectionData).length }} of {{ students.length }} students ready for enrollment
+                </div>
+                <div class="flex gap-2">
+                    <Button 
+                        label="Cancel" 
+                        icon="pi pi-times" 
+                        severity="secondary"
+                        outlined
+                        @click="hideDialog" 
+                        :disabled="isLoading"
+                    />
+                    <Button 
+                        label="Enroll Students" 
+                        icon="pi pi-check" 
+                        @click="save"
+                        :loading="isLoading"
+                        :disabled="!students.some(s => s.yearLevelData && s.sectionData)"
+                    />
+                </div>
+            </div>
         </template>
     </Dialog>
-
 </template>
+
+<style scoped>
+.student-enrollment-dialog :deep(.p-dialog-content) {
+    padding: 0;
+}
+
+.field {
+    margin-bottom: 0;
+}
+
+.p-invalid {
+    border-color: #f87171;
+}
+
+.p-error {
+    color: #f87171;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+</style>

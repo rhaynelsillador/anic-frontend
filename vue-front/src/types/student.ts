@@ -37,7 +37,6 @@ export default class StudentResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<StudentResponse>(studentApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -48,7 +47,6 @@ export default class StudentResponse {
   public getDataById(id : number, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.get<BaseResponse>(studentApi.BaseUrl+'/'+id)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -59,7 +57,6 @@ export default class StudentResponse {
   public getAcademicDataById(id : number, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.get<BaseResponse>(subjectCodeApi.BaseUrl+'/student/'+id)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {
@@ -70,7 +67,6 @@ export default class StudentResponse {
   public updateStudent(student : {}, success: (data: BaseResponse) => void, error: (err: any) => void): void {
     ajax.put<BaseResponse>(studentApi.BaseUrl+'/'+student.id, student)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
         })
         .catch(err => {

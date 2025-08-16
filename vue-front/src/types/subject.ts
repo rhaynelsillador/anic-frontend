@@ -24,7 +24,6 @@ export default class SubjectResponse {
     let query = new FilterParser().toUriParams(filter);
     ajax.get<SubjectResponse>(subjectApi.BaseUrl+query)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -37,7 +36,6 @@ export default class SubjectResponse {
     if(subject.id){
       ajax.put<BaseResponse>(subjectApi.BaseUrl+'/'+subject.id, subject)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })
@@ -47,7 +45,6 @@ export default class SubjectResponse {
       }else{
         ajax.post<BaseResponse>(subjectApi.BaseUrl, subject)
         .then(res => {
-            console.log(res.data)
             if (success) success(res.data)
             
         })

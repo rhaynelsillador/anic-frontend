@@ -20,7 +20,7 @@
                 :sortable="true">
                 <template #body="{ data }">
                     <a href="javascript:void(0)"
-                        v-on:click="() => { dialog = true; subject = JSON.parse(JSON.stringify(data)) }">{{ data.code
+                        v-on:click="() => { dialog = true; subject = JSON.parse(JSON.stringify(data)) }">{{ data.code ?? 'N/A'
                         }}</a>
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
@@ -144,9 +144,6 @@ const loadSubjects = (filter) => {
         (data) => {
             dataList.value = data.data;
             totalRecords.value = data.page.totalCount;
-        },
-        (err) => {
-            console.log(err)
         })
 }
 

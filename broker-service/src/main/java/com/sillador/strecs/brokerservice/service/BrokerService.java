@@ -45,17 +45,23 @@ public class BrokerService {
                     baseResponse = externalServiceClient.postForward(path, body);
                     break;
                 case "PUT":
-                    body = new BufferedReader(request.getReader())
-                            .lines()
+                    String queryString = request.getQueryString();
+                    if(queryString != null && !queryString.isEmpty()){
+                        queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8);
+                    }
+                    BufferedReader bufferedReader = request.getReader();
+                    body = 
+                            bufferedReader.lines()
                             .collect(Collectors.joining(System.lineSeparator()));
 
                     System.out.println("HTTP Body: " + body);
 
 
-                    baseResponse = externalServiceClient.putForward(path, body);
+                    baseResponse = externalServiceClient.putForward(path +"?"+ queryString, body);
+                    bufferedReader.close();
                     break;
                 case "GET":
-                    String queryString = request.getQueryString();
+                    queryString = request.getQueryString();
                     if(queryString != null && !queryString.isEmpty()){
                         queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8);
                     }

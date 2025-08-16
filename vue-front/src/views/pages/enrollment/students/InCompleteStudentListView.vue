@@ -184,9 +184,6 @@ const loadStudents = (filter) => {
         (data) => {
             students.value = data.data;
             totalRecords.value = data.page.totalCount;
-        },
-        (err) => {
-            console.log(err)
         })
 }
 

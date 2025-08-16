@@ -30,9 +30,6 @@ export class FilterParser {
     if(filter.rows){
       params1.append("limit", String(filter.rows))
     }
-
-    
-    console.log(">>>>>>>> ", filter)
     if(filter && filter.filters){
       
       Object.keys(filter.filters).forEach(key => {

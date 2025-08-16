@@ -160,9 +160,6 @@ onMounted(() => {
     if (!globalStore.schoolYearsLoaded) {
         globalStore.fetchSchoolYears();
     }
-
-    console.log(selectedStudent.value, 'mounted')
-
 });
 
 
@@ -173,7 +170,6 @@ defineExpose({
 
 
 watch(selectedStudent, (newVal, oldVal) => {
-    console.log(`count changed from ${oldVal.length} to ${newVal.length}`);
     emit('onSelect', newVal);
 });
 
@@ -198,9 +194,6 @@ const loadStudents = (filter) => {
         (data) => {
             students.value = data.data;
             totalRecords.value = data.page.totalCount;
-        },
-        (err) => {
-            console.log(err)
         })
 }
 

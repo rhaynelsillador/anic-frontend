@@ -27,8 +27,12 @@ public class UserInfoRestController {
             return new BaseResponse().build(ResponseCode.ERROR, "Not login.");
         }
 
-        String user = auth.getPrincipal().toString();
+        String accountId = auth.getPrincipal().toString();
 
-        return externalServiceClient.getForward(ACCOUNT_INFO_PATH+user, "");
+        if(accountId == null || accountId.isEmpty() || accountId.equals("anonymousUser")){
+            return new BaseResponse().build(ResponseCode.ERROR, "Invalid account.");
+        }
+
+        return externalServiceClient.getForward(ACCOUNT_INFO_PATH+"profile/"+accountId, "");
     }
 }
